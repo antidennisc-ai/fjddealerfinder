@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FJD Trion 代理商开发指南（内部销售专用）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif; background: #f5f4f0; color: #1a1a1a; font-size: 15px; line-height: 1.7; }
+  .page-header { background: #1a1a1a; color: #fff; padding: 2rem 2.5rem; }
+  .page-header h1 { font-size: 22px; font-weight: 500; letter-spacing: 0.02em; }
+  .page-header .sub { font-size: 13px; color: #999; margin-top: 4px; }
+  .notice { background: #fff8e1; border-left: 3px solid #f59e0b; padding: 0.75rem 1rem; margin: 1.5rem 2.5rem 0; border-radius: 0 6px 6px 0; font-size: 13px; color: #78350f; }
+  .toc { margin: 1.5rem 2.5rem; display: flex; flex-wrap: wrap; gap: 8px; }
+  .toc a { font-size: 12px; padding: 5px 12px; border-radius: 20px; background: #fff; border: 0.5px solid #d1cfc5; color: #444; text-decoration: none; transition: background 0.15s; }
+  .toc a:hover { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .section { margin: 2rem 2.5rem; }
+  .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1.5px solid #1a1a1a; }
+  .section-title h2 { font-size: 17px; font-weight: 500; }
+  .badge { font-size: 11px; padding: 3px 9px; border-radius: 12px; font-weight: 500; }
+  .badge-green { background: #d1fae5; color: #065f46; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-purple { background: #ede9fe; color: #5b21b6; }
+  .badge-gray { background: #f3f4f6; color: #374151; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .card { background: #fff; border: 0.5px solid #ddd; border-radius: 10px; padding: 1rem 1.25rem; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .card-name { font-size: 15px; font-weight: 500; color: #1a1a1a; }
+  .card-sub { font-size: 12px; color: #888; margin-top: 2px; }
+  .card-insight { background: #f9f8f5; border-radius: 6px; padding: 8px 10px; font-size: 13px; color: #555; margin: 8px 0; border-left: 2px solid #d1cfc5; }
+  .card-insight.win { border-left-color: #10b981; background: #f0fdf4; color: #065f46; }
+  .card-insight.warn { border-left-color: #f59e0b; background: #fffbeb; color: #78350f; }
+  .card-insight.info { border-left-color: #3b82f6; background: #eff6ff; color: #1e40af; }
+  .context-bar { background: #f0f4ff; border: 0.5px solid #c7d7f7; border-radius: 6px; padding: 7px 10px; font-size: 12px; color: #1e3a8a; margin-bottom: 8px; }
+  .card-pitch { margin-top: 10px; }
+  .card-pitch label { font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
+  .pitch-text { font-size: 13px; color: #333; line-height: 1.6; background: #f0f4ff; border-radius: 6px; padding: 8px 10px; border-left: 2px solid #3b82f6; }
+  .pitch-alt { font-size: 13px; color: #333; line-height: 1.6; background: #f0fdf4; border-radius: 6px; padding: 8px 10px; border-left: 2px solid #10b981; margin-top: 6px; }
+  .card-link { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #3b82f6; text-decoration: none; margin-top: 8px; }
+  .card-link:hover { text-decoration: underline; }
+  .card-link::after { content: '↗'; font-size: 11px; }
+  .competitor-card { border-left: 3px solid #e5e7eb; }
+  .competitor-card.weak { border-left-color: #10b981; }
+  .competitor-card.medium { border-left-color: #f59e0b; }
+  .competitor-card.strong { border-left-color: #ef4444; }
+  .strategy-box { background: #1a1a1a; color: #e5e5e5; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-top: 8px; line-height: 1.7; }
+  .strategy-box .hl { color: #86efac; font-weight: 500; }
+  .strategy-box .warn-hl { color: #fbbf24; font-weight: 500; }
+  .fact-tag { font-size: 11px; background: #1f2937; color: #9ca3af; border-radius: 4px; padding: 2px 6px; display: inline-block; margin-bottom: 6px; }
+  .intel-box { background: #fff; border: 0.5px solid #ddd; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .intel-box h3 { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .intel-step { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #444; margin-top: 6px; }
+  .intel-step-num { min-width: 20px; height: 20px; background: #1a1a1a; color: #fff; border-radius: 50%; font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .pitch-scenario { font-size: 11px; font-weight: 500; color: #6b7280; margin-bottom: 3px; margin-top: 8px; }
+  footer { margin: 3rem 2.5rem 2rem; border-top: 0.5px solid #ddd; padding-top: 1rem; font-size: 12px; color: #aaa; }
+  .verif { font-size: 11px; color: #6b7280; margin-top: 4px; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>FJD Trion 代理商开发指南</h1>
+  <div class="sub">🔒 内部销售专用 · 请勿外传 · V2026.1 · 数据经网络核实</div>
+</div>
+
+<div class="notice">
+  📌 <strong>使用说明：</strong>本文件中的所有「话术」均针对<strong>已经在销售对应品牌的现有代理商</strong>。目标是让对方在现有业务基础上，新增 FJD Trion 产品线（双品牌并行），或将薄弱竞品切换为 FJD Trion。话术中的「你们」指代理商，「你们的客户」指代理商现有终端买家。
+</div>
+
+<nav class="toc">
+  <a href="#siteMind">🏗️ SiteMind — 建筑行业</a>
+  <a href="#treeMind">🌲 TreeMind — 林业</a>
+  <a href="#adaptable">🤖 跨Mind — 无人机 & 机器人</a>
+  <a href="#createmind">🎨 CreativeMind — 室内设计 & 3D打印</a>
+  <a href="#forensic">🔍 地质 & 互补扫描</a>
+  <a href="#golfmind">⛳ GolfMind & 大型直客</a>
+  <a href="#competitor">⚔️ 竞争对手代理商话术</a>
+  <a href="#intel">🕵️ 广告反追踪情报工具</a>
+</nav>
+
+<!-- SITEMIND -->
+<div class="section" id="siteMind">
+  <div class="section-title">
+    <h2>🏗️ SiteMind 方向 — 建筑 / 测量 / BIM</h2>
+    <span class="badge badge-blue">潜在代理合作</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Topcon / Sokkia 代理商</div>
+          <div class="card-sub">定站仪 & 测量传统品牌</div>
+        </div>
+        <span class="badge badge-amber">机会型</span>
+      </div>
+      <div class="context-bar">📍 这批代理商目前在卖 Topcon / Sokkia 全站仪、RTK、GNSS 设备，客户主要是测量公司和工程顾问</div>
+      <div class="card-insight warn">⚠️ Topcon 已 OEM GreenValley O1 手持扫描仪，但产品力弱、迭代慢，代理商对这条产品线并不自信。</div>
+      <div class="card-pitch">
+        <label>双品牌并行话术</label>
+        <div class="pitch-text">「你们的客户现在用 Topcon 做控制测量做得很好，但越来越多项目同时需要手持三维扫描。FJD Trion 的 SiteMind 直接对接 BIM 工作流，我们不和你们现有产品竞争，反而是帮你们在同一批客户面前多卖一条线，把单次客单价翻倍。」</div>
+      </div>
+      <a class="card-link" href="https://www.topcon.co.jp/en/positioning/sokkia/sokkia-network" target="_blank">查看 Sokkia 代理网络</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Geomax 代理商</div>
+          <div class="card-sub">Hexagon 旗下独立品牌 · 无扫描仪产品线</div>
+        </div>
+        <span class="badge badge-green">高优先</span>
+      </div>
+      <div class="context-bar">📍 Geomax 代理商卖 Zoom 系列全站仪和 RTK，但 Geomax 至今没有自己的手持扫描仪产品</div>
+      <div class="card-insight win">✅ Geomax 与 Leica 分开运营，不受 Hexagon 集团扫描仪产品的限制，代理商扫描仪业务是空白地带。</div>
+      <div class="card-pitch">
+        <label>填补空白话术</label>
+        <div class="pitch-text">「你们代理 Geomax，但你们的客户被竞争对手问到手持三维扫描时，你们现在怎么回答？FJD Trion 正好填补这个空缺，而且我们的 SiteMind BIM 输出符合香港政府 BIM 授权政策要求，这是你们立刻可以去开发的新市场，不需要改变任何现有业务。」</div>
+      </div>
+      <a class="card-link" href="https://geomax-positioning.com/" target="_blank">查看 Geomax 官网</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">NavVis 代理商</div>
+          <div class="card-sub">室内移动测量 · AEC 数字孪生</div>
+        </div>
+        <span class="badge badge-amber">竞品代理切入</span>
+      </div>
+      <div class="context-bar">📍 NavVis MLX（2024年9月发布）重 3.6kg，约45分钟续航，主打 AEC 和测量工作流，价格区间偏高</div>
+      <div class="card-insight info">ℹ️ 已核实：NavVis MLX 为 32 线 LiDAR，5mm 精度，3.6kg，最大续航约 45 分钟，定价较高。（数据来源：NavVis 官网，2024）</div>
+      <div class="card-pitch">
+        <label>双品牌并行话术</label>
+        <div class="pitch-text">「NavVis 在大场景 BIM 扫描做得不错，但 3.6kg 加上 45 分钟续航限制了很多现场作业场景，而且价格不亲民。FJD Trion 产品线覆盖从轻量级 P1 到高配 S2 Pro 的完整区间，我们的 Mind 生态在垂直行业的深度是 NavVis 没有的——树木、高尔夫、法证、矿山，这些 NavVis 完全没有覆盖。你们可以用 NavVis 打高端大客，用 FJD 开拓垂直行业客户。」</div>
+      </div>
+      <a class="card-link" href="https://www.navvis.com/partner-program" target="_blank">NavVis 合作伙伴计划</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Autodesk Revit / AutoCAD 增值代理商</div>
+          <div class="card-sub">全球最大 AEC 软件平台代理</div>
+        </div>
+        <span class="badge badge-blue">软件整合</span>
+      </div>
+      <div class="context-bar">📍 Autodesk 授权增值代理商（ATC/AUD partners）服务建筑、工程公司，客户日常使用 Revit 做 BIM</div>
+      <div class="card-pitch">
+        <label>双品牌并行话术</label>
+        <div class="pitch-text">「你们的 Revit 客户在做 Scan-to-BIM 时，现场采集还是最大的瓶颈。FJD Trion 配合 Revit，可以把从现场到建模的时间从几天压到几小时，而且我们的 SiteMind 输出符合 BIM 标准格式。你们作为 Autodesk 代理，打包硬件采集方案一起卖，客户一站式解决，你们多一条硬件收益线。」</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Greehill 合作伙伴网络</div>
+          <div class="card-sub">林业 AI 软件 · 26 国代理</div>
+        </div>
+        <span class="badge badge-green">TreeMind 核心</span>
+      </div>
+      <div class="context-bar">📍 Greehill 是林业 AI 分析软件公司，全球 26 国有本地合作伙伴，这批伙伴需要高精度点云数据作为软件输入</div>
+      <div class="card-insight win">✅ 已核实：Greehill 官网列出全球 26 国合作伙伴，这些伙伴的终端客户与 FJD TreeMind 高度重合。</div>
+      <div class="card-pitch">
+        <label>双品牌并行话术</label>
+        <div class="pitch-text">「Greehill 的分析平台非常好，但采集端的数据质量直接决定分析结果。FJD Trion P2 + TreeMind 可以让你们的客户在野外高效采集，数据精度远超传统测量设备，而且两套产品服务的是完全相同的客户群——你们的 26 个国家伙伴都可以同时代理我们的设备，采集 + 分析全链路。」</div>
+      </div>
+      <a class="card-link" href="https://www.greehill.com/" target="_blank">查看 Greehill 官网</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">iGuide 代理商</div>
+          <div class="card-sub">室内虚拟实境 & 平面图 SaaS</div>
+        </div>
+        <span class="badge badge-amber">注意动态</span>
+      </div>
+      <div class="context-bar">📍 iGuide 代理商目前用 360 相机为客户拍虚拟实境，服务地产中介、物业管理公司</div>
+      <div class="card-insight warn">⚠️ iGuide 正在往精准平面图方向延伸，与我们部分重叠，同时也是合作机会。</div>
+      <div class="card-pitch">
+        <label>升级合作话术</label>
+        <div class="pitch-text">「你们的客户要的不只是好看的虚拟巡览，越来越多商业地产和工程客户需要毫米级精度的平面图和面积数据。FJD Trion 能同时产出精准点云和可交付的平面图，你们可以用这个差异化打动那些对现有 360 相机方案不满意的高端客户，提升单次项目收费。」</div>
+      </div>
+      <a class="card-link" href="https://goiguide.com/resellers" target="_blank">查看 iGuide 代理商名单</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- TREEMIND -->
+<div class="section" id="treeMind">
+  <div class="section-title">
+    <h2>🌲 TreeMind 方向 — 林业 / 树木管理</h2>
+    <span class="badge badge-green">FJD 最高差异化</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Haglof Sweden 代理商</div>
+          <div class="card-sub">林业测距设备 · 欧洲主流品牌</div>
+        </div>
+        <span class="badge badge-blue">升级机会</span>
+      </div>
+      <div class="context-bar">📍 Haglof 代理商卖林业测距仪（2D），客户是林业公司、森林调查机构，已有成熟销售渠道</div>
+      <div class="card-insight win">✅ Haglof 目前只有 2D 测距产品，无三维扫描能力。FJD 不竞争，是直接升级。</div>
+      <div class="card-pitch">
+        <label>升级话术（向 Haglof 代理商说）</label>
+        <div class="pitch-text">「你们卖 Haglof 测距仪多年，积累了大量林业客户的信任。但这批客户现在有了新需求——单木级三维数据、碳汇核查、树高树径自动提取，这些用 2D 测距仪完成不了。FJD TreeMind 是目前市场上极少数能做单木级三维分析的专业系统，客单价是你们现有产品的 3-5 倍，同样的客户关系，更大的订单价值。」</div>
+      </div>
+      <a class="card-link" href="https://haglofsweden.com/project/distance-measuring/" target="_blank">查看 Haglof 官网</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">STIHL 代理商</div>
+          <div class="card-sub">全球最大林业工具品牌 · 庞大代理网络</div>
+        </div>
+        <span class="badge badge-amber">长期布局</span>
+      </div>
+      <div class="context-bar">📍 STIHL 代理商售卖电锯、割草机等林业作业工具，与林业公司、园林公司有长期合作</div>
+      <div class="card-pitch">
+        <label>交叉销售话术</label>
+        <div class="pitch-text">「你们的客户每天在用 STIHL 的工具作业，但他们在作业前后的调查和记录还靠人工。FJD TreeMind 可以帮他们在砍伐前快速生成树木资产报告，作业后做效果对比——这是你们现在完全可以提供的增值服务，不需要引入新的技术门槛。而且你们作为代理商，硬件毛利空间比工具类产品高很多。」</div>
+      </div>
+      <a class="card-link" href="https://www.stihl.com/en" target="_blank">查看 STIHL 官网</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Ochsenkopf 代理商</div>
+          <div class="card-sub">欧洲林业手工具品牌</div>
+        </div>
+        <span class="badge badge-gray">次要目标</span>
+      </div>
+      <div class="context-bar">📍 Ochsenkopf 代理商在欧洲中小型林业市场有稳定客户，适合北欧和德语区市场切入</div>
+      <div class="card-pitch">
+        <label>话术</label>
+        <div class="pitch-text">「你们在欧洲林业市场的客户关系是我们进入这个市场最快的路径。FJD TreeMind 在欧洲目前几乎没有直接竞争，客户对三维林业调查的需求很旺盛，你们可以成为本地的领先代理商。」</div>
+      </div>
+      <a class="card-link" href="https://www.ochsenkopf.com/en-at/produkte/forestry-and-carpentry-tools/wood-working-tools" target="_blank">查看 Ochsenkopf 官网</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- DRONE & ROBOT -->
+<div class="section" id="adaptable">
+  <div class="section-title">
+    <h2>🤖 跨 Mind — 无人机 & 机器人代理商</h2>
+    <span class="badge badge-purple">空地整合 / API 集成</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">DJI Enterprise 代理商</div>
+          <div class="card-sub">空中 LiDAR 市场领导者</div>
+        </div>
+        <span class="badge badge-green">高优先</span>
+      </div>
+      <div class="context-bar">📍 这批代理商在卖 DJI Zenmuse L2、Matrice 系列，客户主要是测量公司、工程公司、矿山、林业</div>
+      <div class="card-insight win">✅ 核心逻辑：Sky（DJI 空中）+ Ground（FJD 地面）= 完整空地扫描解决方案，无缝覆盖任何地形。</div>
+      <div class="card-pitch">
+        <label>双品牌并行话术</label>
+        <div class="pitch-text">「你们的 DJI 无人机帮客户解决了空中和开放地形的扫描，但客户的室内、地下、密闭空间和树冠遮蔽区域怎么办？FJD Trion 正好填补这个盲区。而且两套数据可以在我们的 Model 软件里做空地融合，你们向客户提供的是一套完整的解决方案，不只是单一设备。客单价更高，客户黏性也更强。」</div>
+      </div>
+      <a class="card-link" href="https://www.dji.com/hk/where-to-buy/enterprise-dealers" target="_blank">查看 DJI 企业代理名单</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Wingtra 代理商</div>
+          <div class="card-sub">测量级固定翼无人机</div>
+        </div>
+        <span class="badge badge-blue">空地整合</span>
+      </div>
+      <div class="context-bar">📍 Wingtra 代理商服务高精度测量市场，客户对精度要求极高，预算充足</div>
+      <div class="card-pitch">
+        <label>双品牌并行话术</label>
+        <div class="pitch-text">「Wingtra 在大面积高精度测量是标杆，你们的客户标准也很高。FJD Trion 的地面扫描精度与 Wingtra 空中数据同级，在我们的 Model 软件里可以做空地数据融合，帮你们的客户在单个项目里同时提交高精度空中和地面交付物，这个打包方案在欧洲测量市场很有竞争力。」</div>
+      </div>
+      <a class="card-link" href="https://wingtra.com/find-a-distributor/" target="_blank">查看 Wingtra 代理商名单</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Boston Dynamics 合作伙伴</div>
+          <div class="card-sub">四足机器人 · Spot</div>
+        </div>
+        <span class="badge badge-purple">API 集成</span>
+      </div>
+      <div class="context-bar">📍 Boston Dynamics 合作伙伴将 Spot 卖给工业、能源、建筑行业做自动化巡检</div>
+      <div class="card-pitch">
+        <label>集成升级话术</label>
+        <div class="pitch-text">「Spot 在工厂和矿山的巡检已经被客户接受，但现在多数时候输出的只是视频和图像。如果把 FJD Trion 挂载上去，每次巡检同步生成精确三维模型，客户从『看见问题』升级到『量化问题』，这在工业维修规划和安全报告方面有直接的商业价值。你们可以用这个组合提升 Spot 项目的单次合同金额。」</div>
+      </div>
+      <a class="card-link" href="https://bostondynamics.com/partners/" target="_blank">查看 BD 合作伙伴</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Unitree / AgileX / Deep Robotics 代理商</div>
+          <div class="card-sub">国产移动机器人平台</div>
+        </div>
+        <span class="badge badge-purple">API 集成</span>
+      </div>
+      <div class="context-bar">📍 这批代理商在卖国产四足机器人和移动底盘，客户在找能落地的行业应用场景</div>
+      <div class="card-pitch">
+        <label>场景落地话术</label>
+        <div class="pitch-text">「你们的客户买了机器人，但很多时候最大的挑战是找到有说服力的应用场景。FJD Trion + 机器人平台的组合，让机器人每次运动都同步产出建筑或工厂的实时三维模型，这个场景在仓储自动化、巡检报告、工厂数字孪生方向是真实的刚需，帮你们的客户找到落地理由，同时你们多出一套硬件的收益。」</div>
+      </div>
+      <a class="card-link" href="https://shop.unitree.com/pages/become-a-distributor" target="_blank">Unitree 代理申请</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">ANYbotics 合作伙伴</div>
+          <div class="card-sub">瑞士工业机器人 ANYmal · 石化 / 能源行业</div>
+        </div>
+        <span class="badge badge-purple">API 集成</span>
+      </div>
+      <div class="context-bar">📍 ANYbotics 合作伙伴将 ANYmal 卖给石化、电力、海上平台做危险环境巡检</div>
+      <div class="card-pitch">
+        <label>话术</label>
+        <div class="pitch-text">「ANYmal 在石化和电力设施已经有很好的巡检案例。如果整合 FJD Trion，每次巡检可以同步更新设施的精准三维模型，为 PowerMind 方向的客户提供持续更新的数字孪生，这是合同价值翻倍的路径。」</div>
+      </div>
+      <a class="card-link" href="https://www.anybotics.com/partners/" target="_blank">查看 ANYbotics 合作伙伴</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Bambu Lab / Creality 代理商</div>
+          <div class="card-sub">消费级 3D 打印品牌</div>
+        </div>
+        <span class="badge badge-amber">创新场景</span>
+      </div>
+      <div class="context-bar">📍 这批代理商在卖 3D 打印机，客户是建筑师、设计师、模型公司、教育机构</div>
+      <div class="card-pitch">
+        <label>完整工作流话术</label>
+        <div class="pitch-text">「你们的 3D 打印机很好，但很多客户的痛点是——怎么把真实建筑或物体变成可以打印的 3D 文件？FJD Trion 扫描任何真实场景，生成精确三维模型，直接送进打印机。建筑师做实体模型、博物馆做文物复制、城市规划做沙盘，这些场景你们目前还没有充分开发，而且 FJD 硬件的毛利空间远高于打印机耗材。」</div>
+      </div>
+      <a class="card-link" href="https://bambulab.com/en/dealer" target="_blank">Bambu Lab 代理申请</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- CREATIVEMIND / INTERIOR -->
+<div class="section" id="createmind">
+  <div class="section-title">
+    <h2>🎨 CreativeMind 方向 — 室内设计 / 3DGS</h2>
+    <span class="badge badge-blue">数字孪生 & 可视化</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Matterport 代理商</div>
+          <div class="card-sub">室内虚拟实境 SaaS · 全球代理网络</div>
+        </div>
+        <span class="badge badge-green">替换 / 升级</span>
+      </div>
+      <div class="context-bar">📍 Matterport 代理商用 360 相机为客户拍虚拟实境，但精度有限，主要面向地产和物业管理</div>
+      <div class="card-pitch">
+        <label>升级话术</label>
+        <div class="pitch-text">「Matterport 在地产展示做得很好，但你们的客户如果需要精准测量——面积数据、平面图、BIM 交付——360 相机就不够用了。FJD Trion 能在提供可视化效果的同时，输出达到工程级精度的点云数据，帮你们打开地产以外的商业地产、工程验收客户群，这些客户愿意付的钱是拍虚拟实境的好几倍。」</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Unreal Engine / Unity 合作伙伴</div>
+          <div class="card-sub">游戏引擎 & 数字孪生开发商</div>
+        </div>
+        <span class="badge badge-blue">3DGS 整合</span>
+      </div>
+      <div class="context-bar">📍 这批合作伙伴在帮客户做虚拟场景和数字孪生，客户包括建筑可视化、文化遗产、城市规划公司</div>
+      <div class="card-pitch">
+        <label>数据采集补齐话术</label>
+        <div class="pitch-text">「你们的开发者在做真实场景的数字孪生，但现实场景的数据采集一直是瓶颈。FJD Trion 的点云数据和 3D 高斯散射（3DGS）技术完美配合，从采集到建模的时间大幅缩短。你们作为引擎合作伙伴，可以把 FJD 硬件打包进整体方案，提升项目交付能力的同时增加硬件收入。」</div>
+      </div>
+      <a class="card-link" href="https://partners.unrealengine.com/s/directory" target="_blank">Unreal 合作伙伴目录</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">SketchUp / Blender 增值代理商</div>
+          <div class="card-sub">建筑 & 设计软件</div>
+        </div>
+        <span class="badge badge-gray">整合潛力</span>
+      </div>
+      <div class="context-bar">📍 SketchUp / Blender 用户主要是建筑师和室内设计师，现场数据采集靠人工测量或激光测距</div>
+      <div class="card-pitch">
+        <label>话术</label>
+        <div class="pitch-text">「你们的设计师客户现在怎么采集现场数据？大多还是卷尺或激光测距仪吧。FJD Trion 5 分钟扫一个房间，误差 2cm 内，直接导出到 SketchUp / Blender，设计师从此不再需要重新画平面图。你们可以把这个采集方案和软件培训打包，提升客户黏性的同时增加硬件收益。」</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- GEOLOGY -->
+<div class="section" id="forensic">
+  <div class="section-title">
+    <h2>🔍 地质调查 & 互补扫描</h2>
+    <span class="badge badge-gray">互补合作</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Guideline Geo / IDS GeoRadar 代理商</div>
+          <div class="card-sub">地下雷达 GPR 品牌</div>
+        </div>
+        <span class="badge badge-green">互补方向</span>
+      </div>
+      <div class="context-bar">📍 这批代理商卖地面穿透雷达，客户在建筑、地质、考古、基础设施行业探测地下结构</div>
+      <div class="card-insight win">✅ 完全互补：他们扫地下，FJD 扫地上。同一批客户通常两者都需要。</div>
+      <div class="card-pitch">
+        <label>互补捆绑话术</label>
+        <div class="pitch-text">「你们的 GPR 帮客户看清地下，但地面以上的精确三维模型他们还需要另一套方案。FJD Trion 做地表和地上的三维扫描，和你们的设备完全没有竞争，反而可以打包成地上 + 地下的完整勘察解决方案。你们的客户一次采购就能覆蓋完整场景，你们代理商的单次销售价值直接翻倍。」</div>
+      </div>
+      <a class="card-link" href="https://www.guidelinegeo.com/" target="_blank">Guideline Geo 官网</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Emlid 代理商</div>
+          <div class="card-sub">低成本 RTK · 全球广泛分布</div>
+        </div>
+        <span class="badge badge-green">升级切入</span>
+      </div>
+      <div class="context-bar">📍 Emlid 代理商卖 Reach 系列 RTK，客户是中小型测量公司、农业测量、GIS 数据采集</div>
+      <div class="card-pitch">
+        <label>升级话术</label>
+        <div class="pitch-text">「你们的 Emlid 客户买了 RTK 做测量，但他们的需求正在往三维扫描方向走。FJD V4E 方案在接近 Emlid 客户可以接受的价格区间提供 LiDAR 扫描能力，你们可以引导现有客户向上升级，同时吸引那些预算有限但又需要扫描能力的新客户。」</div>
+      </div>
+      <a class="card-link" href="https://emlid.com/dealers/" target="_blank">查看 Emlid 代理商名单</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- GOLFMIND & BIG ENTERPRISE -->
+<div class="section" id="golfmind">
+  <div class="section-title">
+    <h2>⛳ GolfMind & 大型直客</h2>
+    <span class="badge badge-purple">高客单价</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">AECOM / ARUP / WSP / Jacobs / Atkins / BINNIES</div>
+          <div class="card-sub">全球工程顾问直客</div>
+        </div>
+        <span class="badge badge-green">直客最高优先</span>
+      </div>
+      <div class="context-bar">📍 这些公司在香港均有项目记录，面临 BIM 授权政策（DEVB TC(W) No. 1/2025）带来的刚性采集需求</div>
+      <div class="card-insight win">✅ 香港 BIM 授权政策：2025年4月起，HK$3000万以上政府项目强制要求 BIM，是直接的采购驱动力。</div>
+      <div class="card-pitch">
+        <label>直客话术</label>
+        <div class="pitch-text">「你们公司有大量 BIM 交付需求，特别是在香港 BIM 授权政策落地后，采集效率直接影响交付成本。FJD Trion 的采集效率是传统全站仪的 5-10 倍，SiteMind 输出格式完全符合 BIM 要求，而且我们可以安排针对你们现有项目流程的定制 Demo，让你们的项目团队在自己的工地上看到实际效果。」</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Bunge / Cargill 等食品 / 农业大厂</div>
+          <div class="card-sub">全球农业和食品供应链集团</div>
+        </div>
+        <span class="badge badge-amber">仓储场景</span>
+      </div>
+      <div class="context-bar">📍 大型食品集团在全球有大量仓储和工厂设施，定期需要空间盘查和设施管理</div>
+      <div class="card-pitch">
+        <label>直客话术</label>
+        <div class="pitch-text">「你们全球仓储设施的空间管理和设施盘查是否还依赖人工测量？FJD Trion 可以在几小时内完成一个大型仓库的完整三维扫描，生成精确库存空间模型，支持设施管理团队做空间优化和结构安全监测，大幅减少人工盘查的时间成本。」</div>
+      </div>
+      <a class="card-link" href="https://www.bunge.com/Locations" target="_blank">Bunge 全球设施</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- COMPETITORS -->
+<div class="section" id="competitor">
+  <div class="section-title">
+    <h2>⚔️ 竞争对手代理商 — 转换 & 并行话术</h2>
+    <span class="badge badge-red">内部参考</span>
+  </div>
+
+  <div class="card-insight info" style="margin-bottom: 1rem; border-radius: 8px; padding: 10px 14px;">
+    💡 <strong>核心定位：</strong>FJD Trion 不是「又一个」手持扫描仪——我们是唯一拥有<strong>完整闭环生态</strong>的品牌：自研硬件（P/S 系列）+ 自研 SLAM 算法 + 自研 Mind 软件模块（SiteMind / TreeMind / GolfMind / ForensicMind / MineMind / PowerMind）+ 机器人产品线。所有研发、迭代、生产均由 FJDynamics 自主完成。对手只有设备，我们有的是整个行业解决方案生态。
+  </div>
+
+  <p style="font-size:13px; color:#666; margin-bottom: 1rem;">威胁程度：<span style="color:#10b981; font-weight:500;">●</span> 低威胁可替换 &nbsp;<span style="color:#f59e0b; font-weight:500;">●</span> 中等需注意 &nbsp;<span style="color:#ef4444; font-weight:500;">●</span> 强竞争需针对</p>
+  <div class="cards">
+
+    <div class="card competitor-card strong">
+      <div class="card-header">
+        <div><div class="card-name">Leica BLK2GO 代理商</div><div class="card-sub">Hexagon 集团 · 手持 SLAM 扫描仪</div></div>
+        <span class="badge badge-red">强竞争</span>
+      </div>
+      <div class="fact-tag">✅ 已核实：BLK2GO 硬件自 2019 年发布至今无新一代硬件，2025年仅为固件更新（v4.3.0，2025年9月）。BLK2GO PULSE 为全新产品线但定位室内轻量场景，并非 BLK2GO 升级。</div>
+      <div class="context-bar">📍 这批代理商代理 Leica BLK2GO，客户主要是建筑、工程、设施管理公司</div>
+      <div class="strategy-box">
+        <div class="pitch-scenario">转换话术（让代理商同时卖 FJD）</div>
+        「你们的 BLK2GO 客户很忠实，但他们一直在等一个问题的答案——<span class="hl">这款硬件什么时候升级？</span>BLK2GO 的硬件从 2019 年发布至今没有新一代，竞争对手已经迭代了好几轮。FJD Trion 的点云质量在独立测试中已经超过 BLK2GO，而且我们有<span class="hl">完整的六大 Mind 行业模块</span>——这是 Leica 完全没有的。你们可以继续卖 BLK2GO 服务老客户，同时用 FJD 开拓那些需要行业解决方案的新客户，两条腿走路。Leica 迭代慢是客观事实，长远来看我们的生态优势会越来越明显。」
+      </div>
+    </div>
+
+    <div class="card competitor-card strong">
+      <div class="card-header">
+        <div><div class="card-name">FARO Orbis / Focus 代理商</div><div class="card-sub">FARO Technologies · NASDAQ: FARO</div></div>
+        <span class="badge badge-red">强竞争但有缺口</span>
+      </div>
+      <div class="fact-tag">✅ 已核实：FARO Orbis / Orbis Premium 使用第三方 GeoSLAM 算法，非 FARO 自研 SLAM。FARO Focus 系列为固定三脚架扫描仪，无手持移动版本。</div>
+      <div class="context-bar">📍 这批代理商卖 FARO Focus（定站）和 Orbis（移动），客户是工程、制造、执法调查公司</div>
+      <div class="strategy-box">
+        <div class="pitch-scenario">对比话术</div>
+        「你们卖的 FARO Orbis 本身是个好产品，但有一个关键点值得你们了解——<span class="warn-hl">Orbis 的 SLAM 算法是用 GeoSLAM 的，不是 FARO 自研的</span>。这意味着 FARO 的核心能力依赖第三方。FJD Trion 的 SLAM 算法是我们全程自研自迭代的，从硬件到软件到行业模块，整个生态都在我们手里，我们的迭代速度和方向完全不受制于第三方。此外 FARO Focus 系列是定站式，根本没有手持移动版本——你们的客户如果需要移动扫描，FJD 是更完整的选择。」
+      </div>
+    </div>
+
+    <div class="card competitor-card strong">
+      <div class="card-header">
+        <div><div class="card-name">NavVis VLX / MLX 代理商</div><div class="card-sub">室内移动测量 · AEC 数字孪生</div></div>
+        <span class="badge badge-red">强竞争 · AEC 方向</span>
+      </div>
+      <div class="fact-tag">✅ 已核实：NavVis MLX（2024年9月发布）重 3.6kg，续航约 45 分钟，定位 AEC 和测量，售价较高。NavVis 无任何垂直行业专属软件模块（无树木、高尔夫、矿山等）。</div>
+      <div class="strategy-box">
+        <div class="pitch-scenario">转换 / 并行话术</div>
+        「NavVis 在 AEC 领域有名气，但它有几个问题你们的客户一定感受到了：<span class="warn-hl">3.6kg 的机身加上 45 分钟续航</span>，在长时间外业扫描里非常吃力；而且它的软件完全只针对 AEC，如果客户项目涉及林业、高尔夫、矿山、法证，NavVis 就无法响应。FJD Trion 的产品线从轻量 P1 到高配 S2 Max 覆盖不同场景需求，六大 Mind 模块深度服务六个垂直行业——这是我们和 NavVis 最根本的差异：NavVis 是一个工具，FJD 是一套生态。」
+      </div>
+    </div>
+
+    <div class="card competitor-card medium">
+      <div class="card-header">
+        <div><div class="card-name">Trimble X9 代理商</div><div class="card-sub">Trimble Geospatial · 定站式激光扫描仪</div></div>
+        <span class="badge badge-amber">中等竞争 · 有合作空间</span>
+      </div>
+      <div class="fact-tag">✅ 已核实：Trimble X7 于 2024年11月宣布停产，X9 为当前主力产品（2024年推出）。Trimble 至今无手持 SLAM 移动扫描仪产品。</div>
+      <div class="context-bar">📍 这批代理商卖 Trimble X9 定站仪，客户是建筑、基础设施、工厂的精密测量</div>
+      <div class="strategy-box">
+        <div class="pitch-scenario">填补缺口话术（双品牌并行）</div>
+        「Trimble X9 在定站精密扫描是很好的产品，你们的客户对它的精度满意——<span class="hl">但 Trimble 至今没有手持 SLAM 移动扫描仪</span>。你们的客户一旦需要手持移动、快速巡查、室内复杂路径扫描，现在给什么答案？FJD Trion 是 Trimble 产品组合里缺失的那一块，我们不竞争，是补全——两套设备一起卖，打包报价，客户满意，你们单次项目收益翻倍。」
+      </div>
+    </div>
+
+    <div class="card competitor-card medium">
+      <div class="card-header">
+        <div><div class="card-name">CHCNAV RS10 代理商</div><div class="card-sub">中国测量品牌</div></div>
+        <span class="badge badge-amber">中等威胁</span>
+      </div>
+      <div class="fact-tag">✅ 已核实：CHCNAV RS10 为手持 SLAM 扫描仪，重约 1.5kg，无 P 系列精密型产品，软件生态较弱。</div>
+      <div class="strategy-box">
+        <div class="pitch-scenario">正面替换话术</div>
+        「RS10 作为入门设备有它的市场，但你们的客户如果在问——<span class="warn-hl">有没有更完整的生态、更丰富的行业模块、更强的软件？</span>——RS10 给不了答案。FJD Trion 从硬件精度到六大 Mind 行业软件，整个体系都是自研的，长期迭代能力不是 CHCNAV 这类以 RTK 为主业的公司能匹敌的。」
+      </div>
+    </div>
+
+    <div class="card competitor-card medium">
+      <div class="card-header">
+        <div><div class="card-name">XGRIDS L2 / K1 代理商</div><div class="card-sub">3D 扫描新兴品牌</div></div>
+        <span class="badge badge-amber">中等威胁</span>
+      </div>
+      <div class="fact-tag">✅ 已核实：XGRIDS 软件定位游戏和视频场景，无行业专属工作流模块。Satlab 为 XGRIDS 和 Feima 的 OEM。</div>
+      <div class="strategy-box">
+        <div class="pitch-scenario">话术</div>
+        「XGRIDS 在消费级场景和视频制作方向有用户基础，但你们的客户如果是专业测量、林业、建筑、矿山，<span class="warn-hl">XGRIDS 的软件完全没有行业工作流支持</span>。FJD 的六大 Mind 模块是针对每个行业深度定制的，不是通用点云软件——这是本质区别。」
+      </div>
+    </div>
+
+    <div class="card competitor-card weak">
+      <div class="card-header">
+        <div><div class="card-name">OmniSLAM LiGrip 代理商</div><div class="card-sub">手持扫描仪新兴品牌</div></div>
+        <span class="badge badge-green">低威胁</span>
+      </div>
+      <div class="strategy-box">
+        <div class="pitch-scenario">话术</div>
+        「OmniSLAM 的着色效果还不错，但它没有 P 系列精密型、没有行业软件模块、没有完整的产品生态。<span class="hl">FJD 是整个生态，OmniSLAM 只是一个设备。</span>你们代理 FJD 能给客户提供的是从采集到行业报告的完整方案，而不是一个单独的扫描工具。」
+      </div>
+    </div>
+
+    <div class="card competitor-card weak">
+      <div class="card-header">
+        <div><div class="card-name">South / StoneX / SHARE / GoSLAM 代理商</div><div class="card-sub">低端市场竞争者</div></div>
+        <span class="badge badge-green">低威胁 · 最易切换</span>
+      </div>
+      <div class="fact-tag">✅ 已核实：South 扫描仪主要 OEM 自 SHARE，StoneX X200 GO 约 35,000 欧元，GoSLAM 为小型公司。</div>
+      <div class="strategy-box">
+        <div class="pitch-scenario">替换话术</div>
+        「这些品牌的共同问题是：软件弱、迭代慢、或依赖 OEM 无自研能力。你们的客户现在买这些产品，买的是价格，不是价值。<span class="hl">FJD 在相比较的价格区间提供的是远超他们的生态深度和持续更新能力</span>，你们向客户解释清楚这个差异，转换动力很强，而且你们代理 FJD 的毛利空间也更好。」
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- INTEL TOOLS -->
+<div class="section" id="intel">
+  <div class="section-title">
+    <h2>🕵️ 广告反追踪情报工具</h2>
+    <span class="badge badge-gray">竞情工具</span>
+  </div>
+  <p style="font-size:13px; color:#666; margin-bottom: 1rem;">通过监控竞争对手的广告投放，找到正在主动采购 LiDAR 的潜在代理商和终端客户。投广告的公司 = 主动推广这个品类的活跃代理商，是最值得接触的潜在合作方。</p>
+
+  <div class="intel-box">
+    <h3>📘 Meta 广告库</h3>
+    <div class="intel-step">
+      <div class="intel-step-num">1</div>
+      <div>进入 <a href="https://www.facebook.com/ads/library/" target="_blank" style="color:#3b82f6;">Meta 广告库</a></div>
+    </div>
+    <div class="intel-step">
+      <div class="intel-step-num">2</div>
+      <div>搜索关键词：「Xgrids」「3D LiDAR Scanner」「GeoSLAM」「BLK2GO」「SLAM Scanner」</div>
+    </div>
+    <div class="intel-step">
+      <div class="intel-step-num">3</div>
+      <div>记录正在投竞品广告的公司名，这些是主动推广该品类的代理商，接触时说明 FJD 的生态优势，转换动力强。</div>
+    </div>
+  </div>
+
+  <div class="intel-box">
+    <h3>💼 LinkedIn 广告库</h3>
+    <div class="intel-step">
+      <div class="intel-step-num">1</div>
+      <div>进入 <a href="https://www.linkedin.com/ad-library/home" target="_blank" style="color:#3b82f6;">LinkedIn 广告库</a></div>
+    </div>
+    <div class="intel-step">
+      <div class="intel-step-num">2</div>
+      <div>搜索「LiDAR Scanner」「Handheld Mapping」「Mobile SLAM Scanner」「3D scanning BIM」</div>
+    </div>
+    <div class="intel-step">
+      <div class="intel-step-num">3</div>
+      <div>B2B 代理商更常在 LinkedIn 投广告，这里找到的是更高质量的代理商线索。</div>
+    </div>
+  </div>
+
+  <div class="intel-box">
+    <h3>🔍 Google 广告透明度中心</h3>
+    <div class="intel-step">
+      <div class="intel-step-num">1</div>
+      <div>进入 <a href="https://adstransparency.google.com/" target="_blank" style="color:#3b82f6;">Google 广告透明度</a></div>
+    </div>
+    <div class="intel-step">
+      <div class="intel-step-num">2</div>
+      <div>搜索竞品品牌名称，识别哪些公司在 Google 上购买竞品关键词广告</div>
+    </div>
+    <div class="intel-step">
+      <div class="intel-step-num">3</div>
+      <div>这些广告主是主动投资这个品类的代理商，通常转换意愿较高，接触效率更好。</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  FJD Trion 内部销售资料 · 仅供内部使用 · 请勿转发客户 · V2026.1 · 竞对数据已通过公开来源核实
+</footer>
+
+</body>
+</html>
