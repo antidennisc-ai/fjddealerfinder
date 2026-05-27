@@ -3,679 +3,767 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FJD Trion 代理商开发手册</title>
+<title>FJD 代理商开发手册 v3</title>
 <style>
 :root {
-  --ink: #111111;
-  --ink-2: #444444;
-  --ink-3: #888888;
-  --paper: #F7F5F0;
+  --ink: #0F0F0F;
+  --ink-2: #3D3D3D;
+  --ink-3: #7A7A7A;
+  --paper: #F6F4EF;
   --white: #FFFFFF;
-  --border: #DEDBD3;
+  --border: #E0DDD5;
   --accent: #5432EB;
-  --accent-light: #EAE8FE;
-  --green: #059669;
+  --accent-light: #ECEAFE;
+  --green: #057A55;
   --green-bg: #ECFDF5;
-  --amber: #B45309;
+  --amber: #92400E;
   --amber-bg: #FFFBEB;
-  --red: #DC2626;
+  --red: #B91C1C;
   --red-bg: #FEF2F2;
-  --blue: #1D4ED8;
+  --blue: #1E40AF;
   --blue-bg: #EFF6FF;
-  --gray-bg: #F3F4F6;
+  --gray-bg: #F3F2EE;
+  --orange: #9A3412;
+  --orange-bg: #FFF7ED;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif; background: var(--paper); color: var(--ink); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+body { font-family: 'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif; background: var(--paper); color: var(--ink); font-size: 16px; line-height: 1.7; min-height: 100vh; }
 
-/* ── HEADER ── */
-.site-header { background: var(--ink); color: var(--white); padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-.site-header .logo { font-size: 15px; font-weight: 600; letter-spacing: 0.04em; display: flex; align-items: center; gap: 10px; }
-.logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
-.site-header .meta { font-size: 11px; color: #888; }
-.breadcrumb { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
-.breadcrumb .sep { color: #555; }
-.breadcrumb .current { color: var(--white); }
+/* HEADER */
+.site-header { background: var(--ink); color: var(--white); padding: 18px 36px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
+.logo { font-size: 16px; font-weight: 700; letter-spacing: 0.03em; display: flex; align-items: center; gap: 10px; }
+.logo-dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; flex-shrink:0; }
+.header-right { text-align: right; }
+.header-meta { font-size: 11px; color: #888; }
+.header-credit { font-size: 11px; color: #5B5BEB; margin-top: 2px; font-style: italic; }
 
-/* ── HOME ── */
+/* HOME */
 #home { display: block; }
 #detail-view { display: none; }
 
-/* ── HERO ── */
-.hero { padding: 48px 32px 36px; border-bottom: 1px solid var(--border); }
-.hero-label { font-size: 11px; letter-spacing: 0.1em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 12px; }
-.hero h1 { font-size: 28px; font-weight: 700; line-height: 1.2; color: var(--ink); max-width: 600px; }
-.hero h1 span { color: var(--accent); }
-.hero-desc { margin-top: 14px; font-size: 14px; color: var(--ink-2); max-width: 640px; line-height: 1.7; }
-.hero-notice { margin-top: 18px; background: var(--amber-bg); border: 1px solid #FCD34D; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: var(--amber); display: flex; gap: 10px; max-width: 720px; }
+/* HERO */
+.hero { padding: 56px 36px 40px; border-bottom: 1px solid var(--border); background: var(--white); }
+.hero-eyebrow { font-size: 12px; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 14px; font-weight: 500; }
+.hero h1 { font-size: 34px; font-weight: 800; line-height: 1.15; color: var(--ink); max-width: 640px; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero-desc { margin-top: 16px; font-size: 16px; color: var(--ink-2); max-width: 660px; line-height: 1.8; }
+.notice-box { margin-top: 24px; background: var(--amber-bg); border: 1px solid #FCD34D; border-radius: 10px; padding: 14px 18px; font-size: 15px; color: var(--amber); max-width: 740px; line-height: 1.7; }
+.notice-box strong { color: #78350F; }
 
-/* ── LOGIC FLOW ── */
-.logic-section { padding: 36px 32px; border-bottom: 1px solid var(--border); }
-.logic-section h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; }
-.flow-row { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; }
-.flow-step { flex: 1; min-width: 160px; padding: 16px 20px; background: var(--white); border: 1px solid var(--border); position: relative; }
-.flow-step:not(:last-child)::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--accent); z-index: 1; background: var(--paper); padding: 0 2px; }
-.flow-step:first-child { border-radius: 8px 0 0 8px; }
-.flow-step:last-child { border-radius: 0 8px 8px 0; }
-.flow-num { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 6px; }
-.flow-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
-.flow-desc { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
-.strategy-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-.pill { font-size: 12px; padding: 5px 12px; border-radius: 20px; font-weight: 500; cursor: default; }
+/* LOGIC STRIP */
+.logic-section { padding: 40px 36px; border-bottom: 1px solid var(--border); }
+.section-label { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 22px; }
+.flow-row { display: flex; gap: 0; flex-wrap: wrap; }
+.flow-step { flex: 1; min-width: 180px; padding: 20px 22px; background: var(--white); border: 1px solid var(--border); position: relative; }
+.flow-step + .flow-step { border-left: none; }
+.flow-step:first-child { border-radius: 10px 0 0 10px; }
+.flow-step:last-child { border-radius: 0 10px 10px 0; }
+.flow-arrow { position: absolute; right: -14px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; z-index: 1; }
+.flow-num { font-size: 11px; font-weight: 800; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 8px; }
+.flow-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+.flow-desc { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+.strategy-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.pill { font-size: 13px; padding: 6px 14px; border-radius: 20px; font-weight: 600; }
 .pill-green { background: var(--green-bg); color: var(--green); }
 .pill-amber { background: var(--amber-bg); color: var(--amber); }
 .pill-purple { background: var(--accent-light); color: var(--accent); }
 .pill-red { background: var(--red-bg); color: var(--red); }
+.pill-orange { background: var(--orange-bg); color: var(--orange); }
 
-/* ── CATEGORY GRID ── */
-.categories-section { padding: 32px 32px; }
-.categories-section h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 20px; }
-.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.cat-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s; }
-.cat-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(84,50,235,0.1); transform: translateY(-2px); }
-.cat-card:active { transform: translateY(0); }
-.cat-icon { font-size: 24px; margin-bottom: 10px; }
-.cat-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
-.cat-sub { font-size: 12px; color: var(--ink-3); line-height: 1.5; margin-bottom: 12px; }
-.cat-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.tag { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 500; }
-.cat-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
-.cat-count { font-size: 11px; color: var(--ink-3); }
-.cat-arrow { font-size: 16px; color: var(--accent); }
+/* CATEGORY GRID */
+.categories-section { padding: 36px 36px; }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.cat-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; padding: 22px; cursor: pointer; transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s; }
+.cat-card:hover { border-color: var(--accent); box-shadow: 0 6px 20px rgba(84,50,235,0.12); transform: translateY(-3px); }
+.cat-card:active { transform: translateY(-1px); }
+.cat-card.robot-card { border-color: #FBBF24; }
+.cat-card.robot-card:hover { border-color: #F59E0B; box-shadow: 0 6px 20px rgba(245,158,11,0.15); }
+.cat-icon { font-size: 28px; margin-bottom: 12px; }
+.cat-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+.cat-sub { font-size: 13px; color: var(--ink-3); line-height: 1.55; margin-bottom: 14px; }
+.cat-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { font-size: 11px; padding: 3px 9px; border-radius: 10px; font-weight: 600; }
+.cat-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+.cat-count { font-size: 12px; color: var(--ink-3); }
+.cat-arrow { font-size: 20px; color: var(--accent); font-weight: 700; }
+.robot-section-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--orange); margin: 28px 0 14px; display: flex; align-items: center; gap: 10px; }
+.robot-section-title::before, .robot-section-title::after { content:''; flex:1; height:1px; background: linear-gradient(to right, #FCD34D, transparent); }
+.robot-section-title::after { background: linear-gradient(to left, #FCD34D, transparent); }
 
-/* ── DETAIL VIEW ── */
-.detail-header { padding: 24px 32px; border-bottom: 1px solid var(--border); background: var(--white); display: flex; align-items: flex-start; gap: 16px; }
-.detail-icon { font-size: 32px; }
-.detail-header-text h1 { font-size: 20px; font-weight: 700; }
-.detail-header-text p { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
-.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--accent); cursor: pointer; padding: 8px 0; background: none; border: none; font-family: inherit; }
+/* DETAIL VIEW */
+.detail-header { padding: 24px 36px; border-bottom: 1px solid var(--border); background: var(--white); }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--accent); cursor: pointer; padding: 6px 0; background: none; border: none; font-family: inherit; font-weight: 600; margin-bottom: 14px; }
 .back-btn:hover { text-decoration: underline; }
-.detail-body { padding: 24px 32px; }
-.strategy-tip { background: var(--accent-light); border-radius: 10px; padding: 16px 20px; font-size: 13px; color: #3730a3; margin-bottom: 24px; line-height: 1.7; }
+.detail-top { display: flex; align-items: flex-start; gap: 16px; }
+.detail-icon { font-size: 36px; line-height: 1; }
+.detail-h1 { font-size: 22px; font-weight: 800; color: var(--ink); }
+.detail-sub { font-size: 14px; color: var(--ink-3); margin-top: 4px; }
+.detail-body { padding: 28px 36px; max-width: 900px; }
+.strategy-tip { background: var(--accent-light); border-radius: 12px; padding: 18px 22px; font-size: 15px; color: #312E81; margin-bottom: 28px; line-height: 1.75; border-left: 4px solid var(--accent); }
 .strategy-tip strong { color: var(--accent); }
-.partner-list { display: flex; flex-direction: column; gap: 16px; }
-.partner-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-.partner-card.competitor { border-left: 4px solid var(--border); }
+
+/* PARTNER CARDS */
+.partner-list { display: flex; flex-direction: column; gap: 14px; }
+.partner-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+.partner-card.competitor { border-left: 5px solid var(--border); }
 .partner-card.comp-weak { border-left-color: var(--green); }
-.partner-card.comp-medium { border-left-color: var(--amber); }
+.partner-card.comp-medium { border-left-color: #F59E0B; }
 .partner-card.comp-strong { border-left-color: var(--red); }
-.partner-top { padding: 16px 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; cursor: pointer; user-select: none; }
+.partner-top { padding: 18px 22px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; cursor: pointer; }
 .partner-top:hover { background: var(--gray-bg); }
-.partner-name { font-size: 14px; font-weight: 600; color: var(--ink); }
-.partner-desc { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
-.partner-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.expand-icon { font-size: 18px; color: var(--accent); transition: transform 0.2s; }
-.partner-card.open .expand-icon { transform: rotate(45deg); }
-.partner-body { display: none; padding: 0 20px 16px; border-top: 1px solid var(--border); }
+.partner-name { font-size: 16px; font-weight: 700; color: var(--ink); }
+.partner-desc { font-size: 13px; color: var(--ink-3); margin-top: 3px; }
+.partner-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.expand-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-light); color: var(--accent); font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, background 0.15s; line-height: 1; }
+.partner-card.open .expand-btn { transform: rotate(45deg); background: var(--accent); color: white; }
+.partner-body { display: none; padding: 0 22px 20px; }
 .partner-card.open .partner-body { display: block; }
-.context-bar { background: var(--blue-bg); border-radius: 6px; padding: 8px 12px; font-size: 12px; color: var(--blue); margin: 12px 0 10px; }
-.insight { border-radius: 6px; padding: 8px 12px; font-size: 12px; margin: 8px 0; border-left: 2px solid; }
+.divider-top { height: 1px; background: var(--border); margin-bottom: 16px; }
+
+/* CONTEXT / INSIGHT */
+.context-bar { background: var(--blue-bg); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--blue); margin-bottom: 12px; line-height: 1.6; }
+.insight { border-radius: 8px; padding: 10px 14px; font-size: 14px; margin: 10px 0; border-left: 3px solid; line-height: 1.6; }
 .insight.win { background: var(--green-bg); color: var(--green); border-color: var(--green); }
 .insight.warn { background: var(--amber-bg); color: var(--amber); border-color: #F59E0B; }
-.insight.info { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); }
-.insight.fact { background: #1F2937; color: #D1D5DB; border-color: #374151; font-size: 11px; }
-.pitch-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 12px 0 6px; }
-.pitch-scenario-label { font-size: 11px; font-weight: 600; color: var(--ink-3); margin: 10px 0 4px; }
-.pitch-box { background: #F0F4FF; border-left: 3px solid var(--accent); border-radius: 6px; padding: 10px 12px; font-size: 13px; color: #1E293B; line-height: 1.7; }
-.pitch-box.alt { background: var(--green-bg); border-left-color: var(--green); }
-.pitch-box.dark { background: #1a1a1a; color: #E5E5E5; border-left: none; border-radius: 8px; }
-.pitch-box.dark .hl { color: #86EFAC; font-weight: 600; }
-.pitch-box.dark .wl { color: #FCD34D; font-weight: 600; }
-.ext-link { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--accent); text-decoration: none; margin-top: 10px; }
+.insight.fact { background: #1A1A2E; color: #B0B8D1; border-color: #3B4A6B; font-size: 13px; }
+
+/* PITCH */
+.pitch-label { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 7px; }
+.pitch-box { background: #F0F4FF; border-left: 4px solid var(--accent); border-radius: 8px; padding: 14px 16px; font-size: 15px; color: #1A1F40; line-height: 1.8; }
+.pitch-box.dark { background: #111827; color: #E5E7EB; border-left: none; border-radius: 10px; }
+.pitch-box.dark .hl { color: #6EE7B7; font-weight: 700; }
+.pitch-box.dark .wl { color: #FDE68A; font-weight: 700; }
+.pitch-box.robot { background: #FFF7ED; border-left-color: #F59E0B; color: #431407; }
+.ext-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--accent); text-decoration: none; margin-top: 12px; font-weight: 600; }
 .ext-link:hover { text-decoration: underline; }
-.ext-link::after { content: '↗'; font-size: 10px; }
-.badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; white-space: nowrap; }
+.ext-link::after { content: '↗'; font-size: 11px; }
+
+/* BADGES */
+.badge { font-size: 11px; padding: 3px 9px; border-radius: 10px; font-weight: 700; white-space: nowrap; }
 .b-green { background: var(--green-bg); color: var(--green); }
 .b-amber { background: var(--amber-bg); color: var(--amber); }
 .b-red { background: var(--red-bg); color: var(--red); }
 .b-purple { background: var(--accent-light); color: var(--accent); }
 .b-blue { background: var(--blue-bg); color: var(--blue); }
 .b-gray { background: var(--gray-bg); color: #6B7280; }
-.intel-step { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--ink-2); margin-top: 8px; }
-.step-num { min-width: 22px; height: 22px; background: var(--ink); color: var(--white); border-radius: 50%; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; flex-shrink: 0; }
-.divider { height: 1px; background: var(--border); margin: 14px 0; }
+.b-orange { background: var(--orange-bg); color: var(--orange); }
+
+/* INTEL */
+.intel-step { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--ink-2); margin-top: 10px; line-height: 1.65; }
+.step-num { min-width: 24px; height: 24px; background: var(--ink); color: var(--white); border-radius: 50%; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+/* FOOTER CREDIT */
+.site-footer { text-align: center; padding: 24px; font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--border); background: var(--white); }
+.site-footer span { color: var(--accent); font-weight: 600; }
+
 @media (max-width: 640px) {
-  .hero { padding: 32px 20px 24px; }
-  .logic-section, .categories-section, .detail-body { padding-left: 20px; padding-right: 20px; }
+  .hero, .logic-section, .categories-section, .detail-body { padding-left: 20px; padding-right: 20px; }
   .detail-header { padding: 20px; }
-  .flow-row { flex-direction: column; }
-  .flow-step::after { display: none; }
-  .flow-step { border-radius: 8px !important; }
   .site-header { padding: 16px 20px; }
+  .hero h1 { font-size: 26px; }
+  .flow-row { flex-direction: column; }
+  .flow-step + .flow-step { border-left: 1px solid var(--border); border-top: none; }
+  .flow-step:first-child { border-radius: 10px 10px 0 0; }
+  .flow-step:last-child { border-radius: 0 0 10px 10px; }
+  .flow-arrow { display: none; }
 }
 </style>
 </head>
 <body>
 
 <header class="site-header">
-  <div class="logo"><div class="logo-dot"></div>FJD Trion · 代理商开发手册</div>
-  <div class="meta">🔒 内部销售专用 · V2026.1</div>
+  <div class="logo"><div class="logo-dot"></div>FJDynamics · 代理商开发手册</div>
+  <div class="header-right">
+    <div class="header-meta">🔒 内部销售专用 · V2026.1</div>
+    <div class="header-credit">Designed by Dennis</div>
+  </div>
 </header>
 
-<!-- ══ HOME PAGE ══ -->
+<!-- ══════════ HOME ══════════ -->
 <div id="home">
 
   <div class="hero">
-    <div class="hero-label">Internal Sales Playbook</div>
-    <h1>如何通过<span>现有代理渠道</span><br>拓展 FJD Trion 销售</h1>
-    <p class="hero-desc">本手册帮助销售团队系统性地识别、接触、说服现有行业代理商合作推广 FJD Trion 扫描仪生态。点击任意类别进入具体代理商话术。</p>
-    <div class="hero-notice">
-      <span>📌</span>
-      <span>所有「话术」均针对<strong>已在销售对应品牌的现有代理商</strong>。目标是让对方新增 FJD Trion 为双品牌并行，或将弱竞品切换为 FJD。「你们」= 代理商，「你们的客户」= 代理商的终端买家。</span>
+    <div class="hero-eyebrow">Internal Sales Playbook · FJDynamics</div>
+    <h1>如何通过<em>现有代理渠道</em><br>拓展 FJD 产品销售</h1>
+    <p class="hero-desc">本手册帮助销售团队系统性地识别、接触、说服行业代理商合作推广 FJD 扫描仪生态与机器人产品线。点击类别卡片进入具体代理商话术。</p>
+    <div class="notice-box">
+      📌 所有「话术」均针对<strong>已在销售对应品牌的现有代理商</strong>。目标是让对方新增 FJD 产品为<strong>双品牌并行</strong>，或将弱竞品<strong>切换为 FJD</strong>。「你们」= 代理商，「你们的客户」= 代理商的终端买家。
     </div>
   </div>
 
   <div class="logic-section">
-    <h2>寻找代理商的核心逻辑</h2>
+    <div class="section-label">寻找代理商的核心逻辑</div>
     <div class="flow-row">
       <div class="flow-step">
         <div class="flow-num">STEP 01</div>
         <div class="flow-title">识别品类重叠</div>
-        <div class="flow-desc">找到服务同一批终端客户但产品不同的代理商——他们已有信任基础，不需要重新开发市场</div>
+        <div class="flow-desc">找服务同一批终端客户但产品不同的代理商——他们已有信任基础，不需要重新开发市场</div>
+        <div class="flow-arrow">→</div>
       </div>
       <div class="flow-step">
         <div class="flow-num">STEP 02</div>
         <div class="flow-title">判断合作类型</div>
-        <div class="flow-desc">互补型（他们无扫描仪）→ 双品牌并行；替换型（他们的扫描仪弱）→ 切换；竞争型 → 抢其不满意的客户</div>
+        <div class="flow-desc">互补型（无扫描/机器人）→ 双品牌并行；替换型（竞品弱）→ 切换；竞争型 → 抢不满意客户</div>
+        <div class="flow-arrow">→</div>
       </div>
       <div class="flow-step">
         <div class="flow-num">STEP 03</div>
         <div class="flow-title">用结果说话</div>
-        <div class="flow-desc">先说客户能获得什么，再说产品是什么——FJD 卖的是行业工作流解决方案，不是扫描仪硬件</div>
+        <div class="flow-desc">先说客户获得什么，再说产品是什么——FJD 卖的是工作流解决方案，不是硬件</div>
+        <div class="flow-arrow">→</div>
       </div>
       <div class="flow-step">
         <div class="flow-num">STEP 04</div>
         <div class="flow-title">强调生态护城河</div>
-        <div class="flow-desc">FJD 全栈自研（SLAM + 硬件 + 六大 Mind 软件 + 机器人），对手只有设备，我们有完整生态</div>
+        <div class="flow-desc">全栈自研（SLAM + 硬件 + 六大 Mind 软件 + 全系机器人），对手只有设备，FJD 是完整生态</div>
       </div>
     </div>
-    <div class="strategy-pills" style="margin-top:20px;">
+    <div class="strategy-pills">
       <span class="pill pill-green">✓ 互补双品牌并行</span>
       <span class="pill pill-amber">⟳ 弱竞品替换</span>
       <span class="pill pill-purple">↗ 垂直行业升级</span>
       <span class="pill pill-red">⚔ 竞争对手代理切入</span>
+      <span class="pill pill-orange">🤖 机器人产品线延伸</span>
     </div>
   </div>
 
   <div class="categories-section">
-    <h2>选择代理商类别 → 查看具体话术</h2>
-    <div class="cat-grid" id="cat-grid">
+    <div class="section-label" style="margin-bottom:18px;">🔵 扫描仪生态 — 点击进入话术</div>
+    <div class="cat-grid" id="cat-grid-scanner">
 
       <div class="cat-card" onclick="showDetail('siteMind')">
         <div class="cat-icon">🏗️</div>
         <div class="cat-title">SiteMind — 建筑 / BIM</div>
         <div class="cat-sub">测量品牌、BIM软件、工程顾问代理商</div>
-        <div class="cat-tags">
-          <span class="tag b-green">互补并行</span>
-          <span class="tag b-blue">软件整合</span>
-        </div>
-        <div class="cat-footer">
-          <span class="cat-count">6 个目标代理类型</span>
-          <span class="cat-arrow">→</span>
-        </div>
+        <div class="cat-tags"><span class="tag b-green">互补并行</span><span class="tag b-blue">软件整合</span></div>
+        <div class="cat-footer"><span class="cat-count">6 个目标代理</span><span class="cat-arrow">→</span></div>
       </div>
 
       <div class="cat-card" onclick="showDetail('treeMind')">
         <div class="cat-icon">🌲</div>
         <div class="cat-title">TreeMind — 林业</div>
         <div class="cat-sub">林业工具、测距仪、林业软件代理商</div>
-        <div class="cat-tags">
-          <span class="tag b-purple">最高差异化</span>
-          <span class="tag b-green">无竞争</span>
-        </div>
-        <div class="cat-footer">
-          <span class="cat-count">3 个目标代理类型</span>
-          <span class="cat-arrow">→</span>
-        </div>
+        <div class="cat-tags"><span class="tag b-purple">最高差异化</span><span class="tag b-green">无竞争</span></div>
+        <div class="cat-footer"><span class="cat-count">3 个目标代理</span><span class="cat-arrow">→</span></div>
       </div>
 
       <div class="cat-card" onclick="showDetail('drone')">
-        <div class="cat-icon">🤖</div>
-        <div class="cat-title">无人机 & 机器人</div>
-        <div class="cat-sub">DJI、Wingtra、机器人平台代理商</div>
-        <div class="cat-tags">
-          <span class="tag b-purple">空地整合</span>
-          <span class="tag b-blue">API集成</span>
-        </div>
-        <div class="cat-footer">
-          <span class="cat-count">6 个目标代理类型</span>
-          <span class="cat-arrow">→</span>
-        </div>
+        <div class="cat-icon">🚁</div>
+        <div class="cat-title">无人机 & 机器人集成</div>
+        <div class="cat-sub">DJI、Wingtra、四足机器人平台代理商</div>
+        <div class="cat-tags"><span class="tag b-purple">空地整合</span><span class="tag b-blue">API集成</span></div>
+        <div class="cat-footer"><span class="cat-count">5 个目标代理</span><span class="cat-arrow">→</span></div>
       </div>
 
       <div class="cat-card" onclick="showDetail('creative')">
         <div class="cat-icon">🎨</div>
         <div class="cat-title">CreativeMind — 室内 & 3DGS</div>
         <div class="cat-sub">室内设计软件、3D打印、引擎平台代理商</div>
-        <div class="cat-tags">
-          <span class="tag b-blue">数字孪生</span>
-          <span class="tag b-amber">升级场景</span>
-        </div>
-        <div class="cat-footer">
-          <span class="cat-count">3 个目标代理类型</span>
-          <span class="cat-arrow">→</span>
-        </div>
+        <div class="cat-tags"><span class="tag b-blue">数字孪生</span><span class="tag b-amber">升级场景</span></div>
+        <div class="cat-footer"><span class="cat-count">3 个目标代理</span><span class="cat-arrow">→</span></div>
       </div>
 
       <div class="cat-card" onclick="showDetail('geology')">
         <div class="cat-icon">🔍</div>
         <div class="cat-title">地质 & 互补扫描</div>
         <div class="cat-sub">GPR地下雷达、低成本RTK代理商</div>
-        <div class="cat-tags">
-          <span class="tag b-green">完全互补</span>
-        </div>
-        <div class="cat-footer">
-          <span class="cat-count">2 个目标代理类型</span>
-          <span class="cat-arrow">→</span>
-        </div>
-      </div>
-
-      <div class="cat-card" onclick="showDetail('enterprise')">
-        <div class="cat-icon">⛳</div>
-        <div class="cat-title">GolfMind & 大型直客</div>
-        <div class="cat-sub">工程顾问直客、大型集团、3DGS平台</div>
-        <div class="cat-tags">
-          <span class="tag b-purple">高客单价</span>
-        </div>
-        <div class="cat-footer">
-          <span class="cat-count">3 个目标客户类型</span>
-          <span class="cat-arrow">→</span>
-        </div>
+        <div class="cat-tags"><span class="tag b-green">完全互补</span></div>
+        <div class="cat-footer"><span class="cat-count">2 个目标代理</span><span class="cat-arrow">→</span></div>
       </div>
 
       <div class="cat-card" onclick="showDetail('competitor')">
         <div class="cat-icon">⚔️</div>
         <div class="cat-title">竞争对手代理商</div>
-        <div class="cat-sub">Leica、FARO、NavVis、Trimble等品牌代理</div>
-        <div class="cat-tags">
-          <span class="tag b-red">转换话术</span>
-          <span class="tag b-amber">并行话术</span>
-        </div>
-        <div class="cat-footer">
-          <span class="cat-count">8 个竞品代理类型</span>
-          <span class="cat-arrow">→</span>
-        </div>
-      </div>
-
-      <div class="cat-card" onclick="showDetail('intel')">
-        <div class="cat-icon">🕵️</div>
-        <div class="cat-title">广告反追踪情报</div>
-        <div class="cat-sub">通过监控竞品广告找到主动采购的代理商</div>
-        <div class="cat-tags">
-          <span class="tag b-gray">情报工具</span>
-        </div>
-        <div class="cat-footer">
-          <span class="cat-count">3 个情报平台</span>
-          <span class="cat-arrow">→</span>
-        </div>
+        <div class="cat-sub">Leica、FARO、NavVis、Trimble等代理</div>
+        <div class="cat-tags"><span class="tag b-red">转换话术</span><span class="tag b-amber">并行话术</span></div>
+        <div class="cat-footer"><span class="cat-count">8 个竞品代理</span><span class="cat-arrow">→</span></div>
       </div>
 
     </div>
+
+    <div class="robot-section-title">🤖 机器人产品线 — 点击进入话术</div>
+    <div class="cat-grid" id="cat-grid-robot">
+
+      <div class="cat-card robot-card" onclick="showDetail('mower')">
+        <div class="cat-icon">🌿</div>
+        <div class="cat-title">割草机器人</div>
+        <div class="cat-sub">FL3000 / FR4000 / RM21 / RCM01 / GM22S<br>住宅、运动场、高尔夫球场代理商</div>
+        <div class="cat-tags"><span class="tag b-orange">机器人产品</span><span class="tag b-green">互补并行</span></div>
+        <div class="cat-footer"><span class="cat-count">5 个目标代理类型</span><span class="cat-arrow">→</span></div>
+      </div>
+
+      <div class="cat-card robot-card" onclick="showDetail('lineMarking')">
+        <div class="cat-icon">📐</div>
+        <div class="cat-title">划线机器人</div>
+        <div class="cat-sub">PaintMaster Pro / Mini<br>运动场、机场、停车场、工地代理商</div>
+        <div class="cat-tags"><span class="tag b-orange">机器人产品</span><span class="tag b-blue">多场景</span></div>
+        <div class="cat-footer"><span class="cat-count">5 个目标代理类型</span><span class="cat-arrow">→</span></div>
+      </div>
+
+      <div class="cat-card robot-card" onclick="showDetail('cleaning')">
+        <div class="cat-icon">🧹</div>
+        <div class="cat-title">清洁机器人</div>
+        <div class="cat-sub">Sveabot 系列<br>商业地产、酒店、医院、工厂代理商</div>
+        <div class="cat-tags"><span class="tag b-orange">机器人产品</span><span class="tag b-purple">24/7自主</span></div>
+        <div class="cat-footer"><span class="cat-count">4 个目标代理类型</span><span class="cat-arrow">→</span></div>
+      </div>
+
+      <div class="cat-card robot-card" onclick="showDetail('livestock')">
+        <div class="cat-icon">🐄</div>
+        <div class="cat-title">畜牧推料机器人</div>
+        <div class="cat-sub">GM22S 系列<br>牧场设备、农业机械代理商</div>
+        <div class="cat-tags"><span class="tag b-orange">机器人产品</span><span class="tag b-amber">农业场景</span></div>
+        <div class="cat-footer"><span class="cat-count">3 个目标代理类型</span><span class="cat-arrow">→</span></div>
+      </div>
+
+      <div class="cat-card robot-card" onclick="showDetail('construction')">
+        <div class="cat-icon">🏗️</div>
+        <div class="cat-title">工地放样机器人</div>
+        <div class="cat-sub">SmartTS / RCM01<br>建筑施工、工程测量代理商</div>
+        <div class="cat-tags"><span class="tag b-orange">机器人产品</span><span class="tag b-blue">精密定位</span></div>
+        <div class="cat-footer"><span class="cat-count">3 个目标代理类型</span><span class="cat-arrow">→</span></div>
+      </div>
+
+    </div>
+
+    <div class="section-label" style="margin-top:28px; margin-bottom:14px;">🕵️ 情报工具</div>
+    <div class="cat-grid" style="grid-template-columns: repeat(auto-fill, minmax(240px,1fr))">
+      <div class="cat-card" onclick="showDetail('intel')">
+        <div class="cat-icon">📡</div>
+        <div class="cat-title">广告反追踪情报</div>
+        <div class="cat-sub">通过监控竞品广告找到主动采购的代理商</div>
+        <div class="cat-tags"><span class="tag b-gray">Meta / LinkedIn / Google</span></div>
+        <div class="cat-footer"><span class="cat-count">3 个情报平台</span><span class="cat-arrow">→</span></div>
+      </div>
+    </div>
+
   </div>
 
+  <div class="site-footer">Designed by <span>Dennis</span> · FJDynamics Internal Use Only · V2026.1</div>
 </div><!-- /home -->
 
-<!-- ══ DETAIL VIEW ══ -->
+<!-- ══════════ DETAIL VIEW ══════════ -->
 <div id="detail-view">
   <div class="detail-header">
-    <div>
-      <button class="back-btn" onclick="showHome()">← 返回概览</button>
-      <div style="display:flex;align-items:center;gap:12px;margin-top:6px;">
-        <div class="detail-icon" id="d-icon"></div>
-        <div class="detail-header-text">
-          <h1 id="d-title"></h1>
-          <p id="d-sub"></p>
-        </div>
+    <button class="back-btn" onclick="showHome()">← 返回概览</button>
+    <div class="detail-top">
+      <div class="detail-icon" id="d-icon"></div>
+      <div>
+        <div class="detail-h1" id="d-title"></div>
+        <div class="detail-sub" id="d-sub"></div>
       </div>
     </div>
   </div>
   <div class="detail-body" id="d-body"></div>
+  <div class="site-footer">Designed by <span>Dennis</span> · FJDynamics Internal Use Only · V2026.1</div>
 </div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────
-const SECTIONS = {
+// ════════════════ DATA ════════════════
+const DATA = {
 
-siteMind: {
-  icon:'🏗️', title:'SiteMind — 建筑 / 测量 / BIM', sub:'目标：已销售测量仪器、BIM软件或工程工具的代理商',
-  tip:'SiteMind 是 FJD 在发达国家的主发动机。切入逻辑：这批代理商的客户就是我们的客户——他们已有信任，只缺手持三维扫描这块拼图。<strong>双品牌并行是最低阻力的切入方式。</strong>',
-  partners:[
-    { name:'Topcon / Sokkia 代理商', desc:'定站仪 & 传统测量品牌', badge:'amber:机会型',
-      context:'这批代理商目前在卖 Topcon / Sokkia 全站仪、RTK、GNSS 设备，客户主要是测量公司和工程顾问。',
-      insight:{type:'warn', text:'⚠️ Topcon 已 OEM GreenValley O1 手持扫描仪，但产品力弱、迭代慢，代理商对这条线并不自信。'},
-      pitchLabel:'双品牌并行话术',
-      pitch:'「你们的客户现在用 Topcon 做控制测量做得很好，但越来越多项目同时需要手持三维扫描。FJD Trion 的 SiteMind 直接对接 BIM 工作流，我们不和你们现有产品竞争，反而是帮你们在同一批客户面前多卖一条线，把单次客单价翻倍。」',
-      link:'https://www.topcon.co.jp/en/positioning/sokkia/sokkia-network', linkText:'Sokkia 代理网络' },
+siteMind:{icon:'🏗️',title:'SiteMind — 建筑 / 测量 / BIM',sub:'目标：已销售测量仪器、BIM软件或工程工具的代理商',
+tip:'SiteMind 是 FJD 在发达国家的主增长引擎。这批代理商的客户就是我们的客户——他们已有信任，只缺手持三维扫描这块拼图。<strong>双品牌并行是最低阻力的切入方式。</strong>',
+partners:[
+{name:'Topcon / Sokkia 代理商',desc:'定站仪 & 传统测量品牌',badge:'amber:机会型',
+context:'这批代理商在卖 Topcon / Sokkia 全站仪、RTK、GNSS 设备，客户主要是测量公司和工程顾问。',
+insight:{type:'warn',text:'⚠️ Topcon 已 OEM GreenValley O1 手持扫描仪，但产品力弱、迭代慢，代理商对这条线并不自信。'},
+pitchLabel:'双品牌并行话术',
+pitch:'「你们的客户现在用 Topcon 做控制测量做得很好，但越来越多项目同时需要手持三维扫描。FJD Trion 的 SiteMind 直接对接 BIM 工作流，我们不和你们现有产品竞争，反而是帮你们在同一批客户面前多卖一条线，把单次客单价翻倍。」',
+link:'https://www.topcon.co.jp/en/positioning/sokkia/sokkia-network',linkText:'Sokkia 代理网络'},
 
-    { name:'Geomax 代理商', desc:'Hexagon 旗下独立品牌 · 至今无手持扫描仪', badge:'green:高优先',
-      context:'Geomax 代理商卖 Zoom 系列全站仪和 RTK，但 Geomax 至今没有自己的手持扫描仪产品。',
-      insight:{type:'win', text:'✅ Geomax 与 Leica 分开运营，不受 Hexagon 扫描仪限制，代理商扫描仪业务是完全空白地带。'},
-      pitchLabel:'填补空白话术',
-      pitch:'「你们代理 Geomax，但你们的客户被竞争对手问到手持三维扫描时，你们现在怎么回答？FJD Trion 正好填补这个空缺，SiteMind BIM 输出符合香港政府 BIM 授权政策，这是你们立刻可以去开发的新市场，不需要改变任何现有业务。」',
-      link:'https://geomax-positioning.com/', linkText:'Geomax 官网' },
+{name:'Geomax 代理商',desc:'Hexagon 旗下独立品牌 · 至今无手持扫描仪',badge:'green:高优先',
+context:'Geomax 代理商卖 Zoom 系列全站仪和 RTK，但 Geomax 至今没有自己的手持扫描仪产品，是空白地带。',
+insight:{type:'win',text:'✅ Geomax 与 Leica 分开运营，不受 Hexagon 集团扫描仪限制，代理商扫描仪业务完全空白。'},
+pitchLabel:'填补空白话术',
+pitch:'「你们代理 Geomax，但你们的客户被问到手持三维扫描时，你们现在怎么回答？FJD Trion 正好填补这个空缺，SiteMind BIM 输出符合香港政府 BIM 授权政策（DEVB TC(W) No. 1/2025），这是你们立刻可以开发的新市场，不需要改变任何现有业务。」',
+link:'https://geomax-positioning.com/',linkText:'Geomax 官网'},
 
-    { name:'NavVis MLX 代理商', desc:'室内移动测量 · AEC 数字孪生',  badge:'amber:竞品代理',
-      context:'NavVis MLX（2024年9月发布）重 3.6kg，约45分钟续航，主打 AEC 和测量工作流，价格较高，软件无垂直行业模块。',
-      insight:{type:'fact', text:'📎 已核实：NavVis MLX 重3.6kg，45分钟续航，5mm精度，32线LiDAR。NavVis 软件无TreeMind / GolfMind / MineMind 等垂直模块。（来源：NavVis 官网，2024）'},
-      pitchLabel:'双品牌并行话术',
-      pitch:'「NavVis 在 AEC 大场景 BIM 扫描有名气，但 3.6kg 加上 45 分钟续航在长时间外业作业里很吃力，而且软件完全只针对 AEC。你们一旦遇到林业、高尔夫、矿山、法证方向的客户，NavVis 就无法响应。FJD Trion 的六大 Mind 模块深度服务六个垂直行业——这是我们和 NavVis 最根本的差异：NavVis 是一个工具，FJD 是一套生态。你们可以用 NavVis 打高端 AEC 大客，用 FJD 开拓垂直行业新客户。」',
-      link:'https://www.navvis.com/partner-program', linkText:'NavVis 合作伙伴计划' },
+{name:'NavVis MLX 代理商',desc:'室内移动测量 · AEC 数字孪生',badge:'amber:竞品代理',
+context:'NavVis MLX（2024年9月发布）重 3.6kg，约45分钟续航，主打 AEC 测量，价格较高，软件无垂直行业模块。',
+insight:{type:'fact',text:'📎 已核实：NavVis MLX 重3.6kg，45分钟续航，5mm精度，无TreeMind / GolfMind / MineMind 等垂直模块。（来源：NavVis 官网，2024）'},
+pitchLabel:'双品牌并行话术',
+pitch:'「NavVis 在 AEC 大场景有名气，但 3.6kg 加上 45 分钟续航在长时间外业很吃力，而且软件完全只针对 AEC。你们一旦遇到林业、高尔夫、矿山、法证方向的客户，NavVis 就无法响应。FJD 的六大 Mind 模块深度服务六个垂直行业——NavVis 是一个工具，FJD 是一套生态。用 NavVis 打高端 AEC 大客，用 FJD 开拓垂直行业新客户，两条腿走路。」',
+link:'https://www.navvis.com/partner-program',linkText:'NavVis 合作伙伴'},
 
-    { name:'Autodesk Revit / AutoCAD 增值代理商', desc:'AEC 软件平台 · 建筑工程市场', badge:'blue:软件整合',
-      context:'Autodesk 授权增值代理商（ATC / AUD partners）服务建筑、工程公司，客户日常使用 Revit 做 BIM 交付。',
-      pitchLabel:'双品牌并行话术',
-      pitch:'「你们的 Revit 客户在做 Scan-to-BIM 时，现场采集还是最大的瓶颈。FJD Trion 配合 Revit，可以把从现场到建模的时间从几天压到几小时，SiteMind 输出符合 BIM 标准格式。你们作为 Autodesk 代理，打包硬件采集方案一起卖，客户一站式解决，你们多一条硬件收益线。」' },
+{name:'Autodesk Revit / AutoCAD 增值代理商',desc:'全球最大 AEC 软件平台代理',badge:'blue:软件整合',
+context:'Autodesk 授权增值代理商（ATC/AUD partners）服务建筑、工程公司，客户日常使用 Revit 做 BIM 交付。',
+pitchLabel:'双品牌并行话术',
+pitch:'「你们的 Revit 客户在做 Scan-to-BIM 时，现场采集还是最大的瓶颈。FJD Trion 配合 Revit，把从现场到建模的时间从几天压到几小时，SiteMind 输出符合 BIM 标准格式。你们打包硬件采集方案一起卖，客户一站式解决，你们多一条硬件收益线。」'},
 
-    { name:'Greehill 合作伙伴网络', desc:'林业 AI 软件 · 全球 26 国代理 · TreeMind 核心渠道', badge:'green:强烈推荐',
-      context:'Greehill 是林业 AI 分析软件公司，全球 26 国有本地合作伙伴，这批伙伴需要高精度点云数据作为软件输入。',
-      insight:{type:'win', text:'✅ 已核实：Greehill 官网列出全球 26 国合作伙伴，这些伙伴的终端客户与 FJD TreeMind 高度重合。'},
-      pitchLabel:'双品牌并行话术',
-      pitch:'「Greehill 的分析平台非常好，但采集端的数据质量直接决定分析结果。FJD Trion P2 + TreeMind 可以让你们的客户在野外高效采集，精度远超传统测距设备，两套产品服务的是完全相同的客户群——你们的 26 个国家伙伴都可以同时代理我们的设备，采集 + 分析全链路覆盖。」',
-      link:'https://www.greehill.com/', linkText:'Greehill 官网' },
+{name:'Greehill 全球合作伙伴网络',desc:'林业 AI 软件 · 26 国代理 · TreeMind 核心渠道',badge:'green:强烈推荐',
+context:'Greehill 是林业 AI 分析软件公司，全球 26 国有本地合作伙伴，这批伙伴需要高精度点云数据作为软件输入。',
+insight:{type:'win',text:'✅ 已核实：Greehill 官网列出全球 26 国合作伙伴，终端客户与 FJD TreeMind 高度重合。'},
+pitchLabel:'双品牌并行话术',
+pitch:'「Greehill 的分析平台非常好，但采集端数据质量直接决定分析结果。FJD Trion P2 + TreeMind 让你们的客户在野外高效采集，精度远超传统测距设备，两套产品服务完全相同的客户群——你们的 26 个国家伙伴都可以同时代理我们的设备，采集 + 分析全链路覆盖。」',
+link:'https://www.greehill.com/',linkText:'Greehill 官网'},
 
-    { name:'iGuide 代理商', desc:'室内虚拟实境 & 平面图 SaaS', badge:'amber:注意动态',
-      context:'iGuide 代理商目前用 360 相机为客户拍虚拟实境，服务地产中介、物业管理公司。',
-      insight:{type:'warn', text:'⚠️ iGuide 正在往精准平面图方向延伸，与我们部分重叠，同时也是合作机会。'},
-      pitchLabel:'升级合作话术',
-      pitch:'「你们的客户要的不只是好看的虚拟巡览，越来越多商业地产和工程客户需要毫米级精度的平面图和面积数据。FJD Trion 能同时产出精准点云和可交付的平面图，你们可以用这个差异化打动那些对现有 360 相机方案不满意的高端客户，提升单次项目收费。」',
-      link:'https://goiguide.com/resellers', linkText:'iGuide 代理商名单' },
-  ]
-},
+{name:'iGuide 代理商',desc:'室内虚拟实境 & 平面图 SaaS',badge:'amber:注意动态',
+context:'iGuide 代理商目前用 360 相机为客户拍虚拟实境，服务地产中介、物业管理公司。',
+insight:{type:'warn',text:'⚠️ iGuide 正在往精准平面图方向延伸，与我们部分重叠，同时也是合作机会。'},
+pitchLabel:'升级合作话术',
+pitch:'「你们的客户要的不只是好看的虚拟巡览，越来越多商业地产和工程客户需要毫米级精度的平面图和面积数据。FJD Trion 能同时产出精准点云和可交付的平面图，用这个差异化打动那些对现有 360 相机方案不满意的高端客户，提升单次项目收费。」',
+link:'https://goiguide.com/resellers',linkText:'iGuide 代理商名单'},
+]},
 
-treeMind: {
-  icon:'🌲', title:'TreeMind — 林业 / 树木管理', sub:'FJD 最高差异化方向：市场上无直接竞争的垂直模块',
-  tip:'TreeMind 是 FJD 在全球最独特的产品——没有任何竞争对手在任何价位上提供同等级的单木三维分析系统。接触林业代理商时，这是最强的入场理由。<strong>他们卖你们，就是在卖一个市场上独一无二的东西。</strong>',
-  partners:[
-    { name:'Haglof Sweden 代理商', desc:'林业测距设备 · 欧洲主流品牌', badge:'blue:升级机会',
-      context:'Haglof 代理商卖林业测距仪（2D），客户是林业公司、森林调查机构，已有成熟的欧洲销售渠道。',
-      insight:{type:'win', text:'✅ Haglof 目前只有 2D 测距产品，无三维扫描能力。FJD 不竞争，是直接升级。'},
-      pitchLabel:'升级话术',
-      pitch:'「你们卖 Haglof 测距仪多年，积累了大量林业客户的信任。但这批客户现在有了新需求——单木级三维数据、碳汇核查、树高树径自动提取，这些用 2D 测距仪完成不了。FJD TreeMind 是目前市场上极少数能做单木级三维分析的专业系统，客单价是你们现有产品的 3-5 倍，同样的客户关系，更大的订单价值。」',
-      link:'https://haglofsweden.com/project/distance-measuring/', linkText:'Haglof 官网' },
+treeMind:{icon:'🌲',title:'TreeMind — 林业 / 树木管理',sub:'FJD 最高差异化方向：市场上无直接竞争的垂直模块',
+tip:'TreeMind 是 FJD 在全球最独特的产品——没有任何竞争对手在任何价位上提供同等级的单木三维分析系统。接触林业代理商时，这是最强的入场理由。<strong>他们卖 FJD，就是在卖一个市场上独一无二的东西。</strong>',
+partners:[
+{name:'Haglof Sweden 代理商',desc:'林业测距设备 · 欧洲主流品牌',badge:'blue:升级机会',
+context:'Haglof 代理商卖林业测距仪（2D），客户是林业公司、森林调查机构，已有成熟的欧洲销售渠道。',
+insight:{type:'win',text:'✅ Haglof 目前只有 2D 测距产品，无三维扫描能力。FJD 不竞争，是直接升级。'},
+pitchLabel:'升级话术',
+pitch:'「你们卖 Haglof 测距仪多年，积累了大量林业客户的信任。但这批客户现在有了新需求——单木级三维数据、碳汇核查、树高树径自动提取，这些用 2D 测距仪完成不了。FJD TreeMind 是目前市场上极少数能做单木级三维分析的专业系统，客单价是你们现有产品的 3-5 倍，同样的客户关系，更大的订单价值。」',
+link:'https://haglofsweden.com/',linkText:'Haglof 官网'},
 
-    { name:'STIHL 代理商', desc:'全球最大林业工具品牌 · 庞大代理网络', badge:'amber:长期布局',
-      context:'STIHL 代理商售卖电锯、割草机等林业作业工具，与林业公司、园林公司有长期合作关系。',
-      pitchLabel:'交叉销售话术',
-      pitch:'「你们的客户每天在用 STIHL 的工具作业，但他们在作业前后的调查和记录还靠人工。FJD TreeMind 可以帮他们在砍伐前快速生成树木资产报告，作业后做效果对比——这是你们现在完全可以提供的增值服务，而且 FJD 硬件的毛利空间比工具类产品高很多。」',
-      link:'https://www.stihl.com/en', linkText:'STIHL 官网' },
+{name:'STIHL 代理商',desc:'全球最大林业工具品牌 · 庞大代理网络',badge:'amber:长期布局',
+context:'STIHL 代理商售卖电锯、割草机等林业作业工具，与林业公司、园林公司有长期合作关系。',
+pitchLabel:'交叉销售话术',
+pitch:'「你们的客户每天在用 STIHL 的工具作业，但他们在作业前后的调查和记录还靠人工。FJD TreeMind 可以帮他们在砍伐前快速生成树木资产报告，作业后做效果对比——这是你们完全可以提供的增值服务，而且 FJD 硬件的毛利空间比工具类产品高很多。」',
+link:'https://www.stihl.com/en',linkText:'STIHL 官网'},
 
-    { name:'Ochsenkopf / 欧洲林业工具代理商', desc:'欧洲林业手工具品牌', badge:'gray:次要目标',
-      context:'Ochsenkopf 代理商在欧洲中小型林业市场有稳定客户，适合北欧和德语区市场切入。',
-      pitchLabel:'话术',
-      pitch:'「你们在欧洲林业市场的客户关系是我们进入这个市场最快的路径。FJD TreeMind 在欧洲目前几乎没有直接竞争，客户对三维林业调查的需求很旺盛，你们可以成为本地的领先代理商。」',
-      link:'https://www.ochsenkopf.com/en-at/produkte/forestry-and-carpentry-tools/wood-working-tools', linkText:'Ochsenkopf 官网' },
-  ]
-},
+{name:'Ochsenkopf / 欧洲林业工具代理商',desc:'欧洲林业手工具品牌',badge:'gray:次要目标',
+context:'Ochsenkopf 代理商在欧洲中小型林业市场有稳定客户，适合北欧和德语区市场切入。',
+pitchLabel:'话术',
+pitch:'「你们在欧洲林业市场的客户关系是我们进入这个市场最快的路径。FJD TreeMind 在欧洲目前几乎没有直接竞争，客户对三维林业调查的需求很旺盛，你们可以成为本地的领先代理商。」',
+link:'https://www.ochsenkopf.com/en-at/produkte/forestry-and-carpentry-tools/wood-working-tools',linkText:'Ochsenkopf 官网'},
+]},
 
-drone: {
-  icon:'🤖', title:'无人机 & 机器人代理商', sub:'空地整合 / API集成 / 完整扫描方案',
-  tip:'这批代理商的核心价值在于：他们的产品已经在客户现场，客户已经认可自动化采集的价值。<strong>FJD Trion 是他们方案里缺失的地面数据维度。</strong> 话术核心：不是卖一台扫描仪，是帮他们把方案价值提升一倍。',
-  partners:[
-    { name:'DJI Enterprise 代理商', desc:'空中 LiDAR 市场领导者', badge:'green:高优先',
-      context:'这批代理商在卖 DJI Zenmuse L2、Matrice 系列，客户主要是测量公司、工程公司、矿山、林业。他们已向客户证明过空中 LiDAR 的价值。',
-      insight:{type:'win', text:'✅ 核心逻辑：Sky（DJI 空中）+ Ground（FJD 地面）= 完整空地扫描方案，覆盖任何地形和空间类型。'},
-      pitchLabel:'双品牌并行话术',
-      pitch:'「你们的 DJI 无人机帮客户解决了空中和开放地形的扫描，但客户的室内、地下、密闭空间和树冠遮蔽区域怎么办？FJD Trion 正好填补这个盲区。两套数据可以在我们的 Model 软件里做空地融合，你们向客户提供的是一套完整的解决方案，不只是单一设备——客单价更高，客户黏性也更强。」',
-      link:'https://www.dji.com/hk/where-to-buy/enterprise-dealers', linkText:'DJI 企业代理名单' },
+drone:{icon:'🚁',title:'无人机 & 机器人平台代理商',sub:'空地整合 / API集成 / 完整扫描方案',
+tip:'这批代理商的产品已经在客户现场，客户已认可自动化采集的价值。<strong>FJD Trion 是他们方案里缺失的地面数据维度</strong>，同时 FJD 的机器人产品线也可作为捆绑推广的延伸产品。',
+partners:[
+{name:'DJI Enterprise 代理商',desc:'空中 LiDAR 市场领导者',badge:'green:高优先',
+context:'这批代理商在卖 DJI Zenmuse L2、Matrice 系列，客户主要是测量公司、工程公司、矿山、林业。',
+insight:{type:'win',text:'✅ 核心逻辑：Sky（DJI 空中）+ Ground（FJD 地面）= 完整空地扫描方案，覆盖任何地形。'},
+pitchLabel:'双品牌并行话术',
+pitch:'「你们的 DJI 无人机帮客户解决了空中和开放地形的扫描，但客户的室内、地下、密闭空间和树冠遮蔽区域怎么办？FJD Trion 正好填补这个盲区。两套数据在 FJD Model 软件里做空地融合，你们向客户提供完整的解决方案，不只是单一设备——客单价更高，客户黏性也更强。」',
+link:'https://www.dji.com/hk/where-to-buy/enterprise-dealers',linkText:'DJI 企业代理名单'},
 
-    { name:'Wingtra 代理商', desc:'测量级固定翼无人机 · 高精度市场', badge:'blue:空地整合',
-      context:'Wingtra 代理商服务高精度测量市场，客户对精度要求极高，预算充足，通常是工程顾问、测量局。',
-      pitchLabel:'双品牌并行话术',
-      pitch:'「Wingtra 在大面积高精度测量是标杆，你们的客户标准也很高。FJD Trion 的地面扫描精度与 Wingtra 空中数据同级，在我们的 Model 软件里可以做空地数据融合，帮你们的客户在单个项目里同时提交高精度空中和地面交付物，这个打包方案在欧洲测量市场很有竞争力。」',
-      link:'https://wingtra.com/find-a-distributor/', linkText:'Wingtra 代理商名单' },
+{name:'Wingtra 代理商',desc:'测量级固定翼无人机 · 高精度市场',badge:'blue:空地整合',
+context:'Wingtra 代理商服务高精度测量市场，客户对精度要求极高，预算充足，通常是工程顾问、测量局。',
+pitchLabel:'双品牌并行话术',
+pitch:'「Wingtra 在大面积高精度测量是标杆，你们的客户标准也很高。FJD Trion 的地面扫描精度与 Wingtra 空中数据同级，在 Model 软件里做空地数据融合，帮你们的客户在单个项目里同时提交高精度空中和地面交付物——这个打包方案在欧洲测量市场很有竞争力。」',
+link:'https://wingtra.com/find-a-distributor/',linkText:'Wingtra 代理商名单'},
 
-    { name:'Boston Dynamics 合作伙伴', desc:'四足机器人 Spot · 工业 / 能源行业', badge:'purple:API集成',
-      context:'Boston Dynamics 合作伙伴将 Spot 卖给工业、能源、建筑行业做自动化巡检，客户已经接受了机器人巡检的概念。',
-      pitchLabel:'集成升级话术',
-      pitch:'「Spot 在工厂和矿山的巡检已经被客户接受，但现在多数时候输出的只是视频和图像。如果把 FJD Trion 挂载上去，每次巡检同步生成精确三维模型，客户从"看见问题"升级到"量化问题"，这在工业维修规划和安全报告方面有直接的商业价值。你们可以用这个组合提升 Spot 项目的单次合同金额。」',
-      link:'https://bostondynamics.com/partners/', linkText:'BD 合作伙伴' },
+{name:'Boston Dynamics / ANYbotics 合作伙伴',desc:'四足机器人 · 工业 / 能源行业',badge:'purple:API集成',
+context:'这批合作伙伴将四足机器人卖给工业、能源、建筑行业做自动化巡检，客户已接受机器人巡检概念。',
+pitchLabel:'集成升级话术',
+pitch:'「Spot / ANYmal 在工厂和矿山的巡检已被客户接受，但现在多数时候输出的只是视频和图像。如果把 FJD Trion 挂载上去，每次巡检同步生成精确三维模型，客户从"看见问题"升级到"量化问题"，在工业维修规划和安全报告方面有直接的商业价值。你们可以用这个组合提升单次合同金额。」',
+link:'https://bostondynamics.com/partners/',linkText:'BD 合作伙伴'},
 
-    { name:'Unitree / AgileX / Deep Robotics 代理商', desc:'国产移动机器人平台', badge:'purple:API集成',
-      context:'这批代理商在卖国产四足机器人和移动底盘，客户在找能落地的行业应用场景，很多时候还在摸索实际用途。',
-      pitchLabel:'场景落地话术',
-      pitch:'「你们的客户买了机器人，但很多时候最大的挑战是找到有说服力的应用场景。FJD Trion + 机器人平台的组合，让机器人每次运动都同步产出建筑或工厂的实时三维模型——仓储自动化、巡检报告、工厂数字孪生，这些是真实的刚需，帮你们的客户找到落地理由，同时你们多出一套硬件的收益。」',
-      link:'https://shop.unitree.com/pages/become-a-distributor', linkText:'Unitree 代理申请' },
+{name:'Unitree / AgileX / Deep Robotics 代理商',desc:'国产移动机器人平台',badge:'purple:API集成',
+context:'这批代理商在卖国产四足机器人和移动底盘，客户在找能落地的行业应用场景，很多时候还在摸索实际用途。',
+pitchLabel:'场景落地话术',
+pitch:'「你们的客户买了机器人，但很多时候最大的挑战是找到有说服力的应用场景。FJD Trion + 机器人平台让机器人每次运动都同步产出实时三维模型——仓储自动化、巡检报告、工厂数字孪生，这些是真实的刚需，帮你们的客户找到落地理由，同时你们多出一套硬件的收益。」',
+link:'https://shop.unitree.com/pages/become-a-distributor',linkText:'Unitree 代理申请'},
 
-    { name:'ANYbotics 合作伙伴', desc:'瑞士工业机器人 ANYmal · 石化 / 电力行业', badge:'purple:API集成',
-      context:'ANYbotics 合作伙伴将 ANYmal 卖给石化、电力、海上平台做危险环境巡检，客户预算高、对数字化输出要求严格。',
-      pitchLabel:'话术',
-      pitch:'「ANYmal 在石化和电力设施已经有很好的巡检案例。如果整合 FJD Trion，每次巡检可以同步更新设施的精准三维模型，为 PowerMind 方向的客户提供持续更新的数字孪生——这是合同价值翻倍的路径。」',
-      link:'https://www.anybotics.com/partners/', linkText:'ANYbotics 合作伙伴' },
+{name:'Bambu Lab / Creality 代理商',desc:'消费级 3D 打印品牌',badge:'amber:创新场景',
+context:'这批代理商在卖 3D 打印机，客户是建筑师、设计师、模型公司、教育机构，很多客户不知道如何获取高质量三维文件。',
+pitchLabel:'完整工作流话术',
+pitch:'「你们的 3D 打印机很好，但很多客户的痛点是——怎么把真实建筑或物体变成可以打印的 3D 文件？FJD Trion 扫描任何真实场景，生成精确三维模型，直接送进打印机。建筑师做实体模型、博物馆做文物复制、城市规划做沙盘——这些场景你们目前还没有充分开发，而且 FJD 硬件的毛利空间远高于打印机耗材。」',
+link:'https://bambulab.com/en/dealer',linkText:'Bambu Lab 代理申请'},
+]},
 
-    { name:'Bambu Lab / Creality 代理商', desc:'消费级 3D 打印品牌', badge:'amber:创新场景',
-      context:'这批代理商在卖 3D 打印机，客户是建筑师、设计师、模型公司、教育机构，很多客户不知道如何获取高质量的真实场景三维文件。',
-      pitchLabel:'完整工作流话术',
-      pitch:'「你们的 3D 打印机很好，但很多客户的痛点是——怎么把真实建筑或物体变成可以打印的 3D 文件？FJD Trion 扫描任何真实场景，生成精确三维模型，直接送进打印机。建筑师做实体模型、博物馆做文物复制、城市规划做沙盘——这些场景你们目前还没有充分开发，而且 FJD 硬件的毛利空间远高于打印机耗材。」',
-      link:'https://bambulab.com/en/dealer', linkText:'Bambu Lab 代理申请' },
-  ]
-},
+creative:{icon:'🎨',title:'CreativeMind — 室内设计 / 3DGS',sub:'数字孪生 & 可视化场景代理商',
+tip:'这个方向的代理商客户价值认知正在快速提升——从"拍好看的图"到"生成可测量的空间数据"。<strong>FJD 帮他们的客户从展示升级到交付。</strong>',
+partners:[
+{name:'Matterport 代理商',desc:'室内虚拟实境 SaaS · 全球代理网络',badge:'green:替换 / 升级',
+context:'Matterport 代理商用 360 相机为客户拍虚拟实境，主要面向地产和物业管理，但精度有限，无法满足工程级需求。',
+pitchLabel:'升级话术',
+pitch:'「Matterport 在地产展示做得很好，但你们的客户如果需要精准测量——面积数据、平面图、BIM 交付——360 相机就不够用了。FJD Trion 在提供可视化效果的同时，输出工程级精度的点云数据，帮你们打开地产以外的商业地产、工程验收客户群，这些客户愿意付的钱是拍虚拟实境的好几倍。」'},
 
-creative: {
-  icon:'🎨', title:'CreativeMind — 室内设计 / 3DGS', sub:'数字孪生 & 可视化场景代理商',
-  tip:'这个方向的代理商客户价值认知正在快速提升——从"拍好看的图"到"生成可测量的空间数据"。<strong>FJD 帮他们的客户从展示升级到交付。</strong>',
-  partners:[
-    { name:'Matterport 代理商', desc:'室内虚拟实境 SaaS · 全球代理网络', badge:'green:替换 / 升级',
-      context:'Matterport 代理商用 360 相机为客户拍虚拟实境，主要面向地产和物业管理，但精度有限，无法满足工程级需求。',
-      pitchLabel:'升级话术',
-      pitch:'「Matterport 在地产展示做得很好，但你们的客户如果需要精准测量——面积数据、平面图、BIM 交付——360 相机就不够用了。FJD Trion 能在提供可视化效果的同时，输出工程级精度的点云数据，帮你们打开地产以外的商业地产、工程验收客户群，这些客户愿意付的钱是拍虚拟实境的好几倍。」' },
+{name:'Unreal Engine / Unity 合作伙伴',desc:'游戏引擎 & 数字孪生开发商',badge:'blue:3DGS整合',
+context:'这批合作伙伴在帮客户做虚拟场景和数字孪生，客户包括建筑可视化、文化遗产、城市规划公司。',
+pitchLabel:'数据采集补齐话术',
+pitch:'「你们的开发者在做真实场景的数字孪生，但现实场景的数据采集一直是瓶颈。FJD Trion 的点云数据和 3D 高斯散射（3DGS）技术完美配合，从采集到建模的时间大幅缩短。你们可以把 FJD 硬件打包进整体方案，提升项目交付能力的同时增加硬件收入。」',
+link:'https://partners.unrealengine.com/s/directory',linkText:'Unreal 合作伙伴目录'},
 
-    { name:'Unreal Engine / Unity 合作伙伴', desc:'游戏引擎 & 数字孪生开发商', badge:'blue:3DGS整合',
-      context:'这批合作伙伴在帮客户做虚拟场景和数字孪生，客户包括建筑可视化、文化遗产、城市规划公司。',
-      pitchLabel:'数据采集补齐话术',
-      pitch:'「你们的开发者在做真实场景的数字孪生，但现实场景的数据采集一直是瓶颈。FJD Trion 的点云数据和 3D 高斯散射（3DGS）技术完美配合，从采集到建模的时间大幅缩短。你们作为引擎合作伙伴，可以把 FJD 硬件打包进整体方案，提升项目交付能力的同时增加硬件收入。」',
-      link:'https://partners.unrealengine.com/s/directory', linkText:'Unreal 合作伙伴目录' },
+{name:'SketchUp / Blender 增值代理商',desc:'建筑 & 设计软件',badge:'gray:整合潜力',
+context:'SketchUp / Blender 用户主要是建筑师和室内设计师，现场数据采集靠人工测量或激光测距仪，效率低且容易出错。',
+pitchLabel:'话术',
+pitch:'「你们的设计师客户现在怎么采集现场数据？大多还是卷尺或激光测距仪吧。FJD Trion 5 分钟扫一个房间，误差 2cm 内，直接导出到 SketchUp / Blender，设计师从此不再需要重新画平面图。你们可以把这个采集方案和软件培训打包，提升客户黏性的同时增加硬件收益。」'},
+]},
 
-    { name:'SketchUp / Blender 增值代理商', desc:'建筑 & 设计软件', badge:'gray:整合潜力',
-      context:'SketchUp / Blender 用户主要是建筑师和室内设计师，现场数据采集靠人工测量或激光测距仪，效率低且容易出错。',
-      pitchLabel:'话术',
-      pitch:'「你们的设计师客户现在怎么采集现场数据？大多还是卷尺或激光测距仪吧。FJD Trion 5 分钟扫一个房间，误差 2cm 内，直接导出到 SketchUp / Blender，设计师从此不再需要重新画平面图。你们可以把这个采集方案和软件培训打包，提升客户黏性的同时增加硬件收益。」' },
-  ]
-},
+geology:{icon:'🔍',title:'地质调查 & 互补扫描',sub:'完全互补的设备代理商——地上 + 地下全覆盖',
+tip:'FJD 和他们的产品<strong>完全不竞争</strong>。地下雷达 + FJD 地面扫描 = 一套完整的勘察方案，代理商打包销售，客户满意，单次收益翻倍。',
+partners:[
+{name:'Guideline Geo / IDS GeoRadar 代理商',desc:'地下雷达 GPR 品牌',badge:'green:互补方向',
+context:'这批代理商卖地面穿透雷达，客户在建筑、地质、考古、基础设施行业探测地下结构。',
+insight:{type:'win',text:'✅ 完全互补：他们扫地下，FJD 扫地上。同一批客户通常两者都需要。'},
+pitchLabel:'互补捆绑话术',
+pitch:'「你们的 GPR 帮客户看清地下，但地面以上的精确三维模型他们还需要另一套方案。FJD Trion 做地表和地上的三维扫描，和你们的设备完全没有竞争，反而可以打包成地上 + 地下的完整勘察解决方案。你们的客户一次采购就能覆盖完整场景，单次销售价值直接翻倍。」',
+link:'https://www.guidelinegeo.com/',linkText:'Guideline Geo 官网'},
 
-geology: {
-  icon:'🔍', title:'地质调查 & 互补扫描', sub:'完全互补的设备代理商——地上 + 地下全覆盖',
-  tip:'这个方向最大的优势是：FJD 和他们的产品<strong>完全不竞争</strong>。地下雷达 + FJD 地面扫描 = 一套完整的勘察方案，代理商打包销售，客户满意，单次收益翻倍。',
-  partners:[
-    { name:'Guideline Geo / IDS GeoRadar 代理商', desc:'地下雷达 GPR 品牌', badge:'green:互补方向',
-      context:'这批代理商卖地面穿透雷达，客户在建筑、地质、考古、基础设施行业探测地下结构。',
-      insight:{type:'win', text:'✅ 完全互补：他们扫地下，FJD 扫地上。同一批客户通常两者都需要。'},
-      pitchLabel:'互补捆绑话术',
-      pitch:'「你们的 GPR 帮客户看清地下，但地面以上的精确三维模型他们还需要另一套方案。FJD Trion 做地表和地上的三维扫描，和你们的设备完全没有竞争，反而可以打包成地上 + 地下的完整勘察解决方案。你们的客户一次采购就能覆盖完整场景，你们代理商的单次销售价值直接翻倍。」',
-      link:'https://www.guidelinegeo.com/', linkText:'Guideline Geo 官网' },
+{name:'Emlid 代理商',desc:'低成本 RTK · 全球广泛分布',badge:'green:升级切入',
+context:'Emlid 代理商卖 Reach 系列 RTK，客户是中小型测量公司、农业测量、GIS 数据采集，预算有限但采购频繁。',
+pitchLabel:'升级话术',
+pitch:'「你们的 Emlid 客户买了 RTK 做测量，但他们的需求正在往三维扫描方向走。FJD V4E 方案在接近 Emlid 客户可以接受的价格区间提供 LiDAR 扫描能力，你们可以引导现有客户向上升级，同时吸引那些预算有限但需要扫描能力的新客户。」',
+link:'https://emlid.com/dealers/',linkText:'Emlid 代理商名单'},
+]},
 
-    { name:'Emlid 代理商', desc:'低成本 RTK · 全球广泛分布', badge:'green:升级切入',
-      context:'Emlid 代理商卖 Reach 系列 RTK，客户是中小型测量公司、农业测量、GIS 数据采集，预算相对有限但采购频繁。',
-      pitchLabel:'升级话术',
-      pitch:'「你们的 Emlid 客户买了 RTK 做测量，但他们的需求正在往三维扫描方向走。FJD V4E 方案在接近 Emlid 客户可以接受的价格区间提供 LiDAR 扫描能力，你们可以引导现有客户向上升级，同时吸引那些预算有限但又需要扫描能力的新客户。」',
-      link:'https://emlid.com/dealers/', linkText:'Emlid 代理商名单' },
-  ]
-},
+competitor:{icon:'⚔️',title:'竞争对手代理商 — 转换 & 并行话术',sub:'数据经公开来源核实 · 威胁程度标注',
+tip:'<strong>核心定位：FJD 不是「又一个」手持扫描仪。</strong>全栈自研（SLAM + 硬件 + 六大 Mind 软件 + 机器人产品线），所有研发、迭代、生产均由 FJDynamics 自主完成。对手只有设备，FJD 有的是整个行业解决方案生态——这一点在长期竞争中的优势是不可逆的。',isComp:true,
+partners:[
+{name:'Leica BLK2GO 代理商',desc:'Hexagon 集团 · 手持 SLAM 扫描仪',badge:'red:强竞争',
+context:'这批代理商代理 Leica BLK2GO，客户主要是建筑、工程、设施管理公司，对 Leica 品牌有信任度。',
+insight:{type:'fact',text:'📎 已核实：BLK2GO 硬件自 2019 年发布至今无新一代硬件，2025年仅固件更新（v4.3.0）。BLK2GO PULSE 为室内轻量用途的全新产品线，非 BLK2GO 升级版。（来源：Leica 官网，2025年9月）'},
+pitchLabel:'转换 / 并行话术',
+pitch:'「你们的 BLK2GO 客户很忠实，但他们一直在等一个问题的答案——这款硬件什么时候升级？BLK2GO 的硬件从 2019 年发布至今没有新一代，竞争对手已经迭代了好几轮。FJD Trion 的点云质量在独立测试中已经超过 BLK2GO，而且我们有完整的六大 Mind 行业模块——这是 Leica 完全没有的。你们可以继续卖 BLK2GO 服务老客户，同时用 FJD 开拓那些需要行业解决方案的新客户，两条腿走路。Leica 迭代慢是客观事实，长远来看我们的生态优势会越来越明显。」'},
 
-enterprise: {
-  icon:'⛳', title:'GolfMind & 大型直客', sub:'高客单价直接客户 · 绕过代理商直销',
-  tip:'这些是可以绕过代理商直接接触的高价值终端客户。话术核心不是产品功能，而是<strong>政策合规压力、ROI 计算、以及解决他们现在没有答案的问题</strong>。',
-  partners:[
-    { name:'AECOM / ARUP / WSP / Jacobs / Atkins / BINNIES', desc:'全球工程顾问直客 · 香港均有项目记录', badge:'green:直客最高优先',
-      context:'这些公司在香港均有项目，面临 BIM 授权政策（DEVB TC(W) No. 1/2025，2025年4月起 HK$3000万以上政府项目强制要求 BIM）带来的刚性采集需求。',
-      insight:{type:'win', text:'✅ 香港 BIM 授权政策是直接的采购驱动力——政策合规压力 > 价格敏感度。'},
-      pitchLabel:'直客话术',
-      pitch:'「你们公司有大量 BIM 交付需求，特别是在香港 BIM 授权政策落地后，采集效率直接影响交付成本。FJD Trion 的采集效率是传统全站仪的 5-10 倍，SiteMind 输出格式完全符合 BIM 要求，我们可以安排针对你们现有项目流程的定制 Demo，让你们的项目团队在自己的工地上看到实际效果。」' },
+{name:'FARO Orbis / Focus 代理商',desc:'FARO Technologies · NASDAQ: FARO',badge:'red:强竞争但有缺口',
+context:'这批代理商卖 FARO Focus（定站三脚架）和 Orbis（移动），客户是工程、制造、执法调查公司。',
+insight:{type:'fact',text:'📎 已核实：FARO Orbis / Orbis Premium 使用第三方 GeoSLAM 的 SLAM 算法，非 FARO 自研。FARO Focus 系列为固定三脚架，无手持移动版本。（来源：FARO 官网，GeoWeek News，2025）'},
+pitchLabel:'对比话术',
+pitch:'「你们卖的 FARO Orbis 本身是个好产品，但有一个关键点值得了解——Orbis 的 SLAM 算法是用 GeoSLAM 的，不是 FARO 自研的。这意味着 FARO 的核心能力依赖第三方，如果 GeoSLAM 迭代慢，FARO 也无能为力。FJD Trion 的 SLAM 算法是我们全程自研自迭代的，从硬件到软件到行业模块，整个生态都在我们手里。此外 FARO Focus 系列是定站式，根本没有手持移动版本——你们的客户如果需要移动扫描，FJD 是更完整的选择。」'},
 
-    { name:'Unreal / Unity 数字孪生开发商', desc:'3DGS 数字孪生 · 建筑可视化 · 文化遗产', badge:'blue:3DGS整合',
-      context:'这批公司在帮客户做真实场景的数字孪生，数据采集是他们最大的技术瓶颈。',
-      pitchLabel:'直客话术',
-      pitch:'「你们的开发者在做真实场景的数字孪生，但数据采集一直是瓶颈。FJD Trion 的点云数据和 3DGS 技术完美配合，从采集到建模的时间大幅缩短，你们的项目交付速度和客户满意度都会提升。」',
-      link:'https://unity.com/partners/directory', linkText:'Unity 合作伙伴目录' },
+{name:'NavVis VLX / MLX 代理商',desc:'室内移动测量 · AEC 数字孪生',badge:'red:强竞争 AEC方向',
+context:'这批代理商卖 NavVis 的穿戴式和手持扫描设备，主要客户是大型 AEC 公司、工厂数字孪生项目。',
+insight:{type:'fact',text:'📎 已核实：NavVis MLX 重3.6kg，续航约45分钟，32线LiDAR，5mm精度。NavVis 软件无任何垂直行业专属模块。（来源：NavVis 官网，2024）'},
+pitchLabel:'转换 / 并行话术',
+pitch:'「NavVis 在 AEC 领域有名气，但它有几个问题你们的客户一定感受到了：3.6kg 的机身加上 45 分钟续航，在长时间外业扫描里非常吃力；而且它的软件完全只针对 AEC，一旦遇到林业、高尔夫、矿山、法证方向的客户，NavVis 就无法响应。FJD Trion 从轻量 P1 到高配 S2 Max 覆盖不同场景，六大 Mind 模块深度服务六个垂直行业——NavVis 是一个工具，FJD 是一套生态。」'},
 
-    { name:'Bunge / Cargill 等大型食品 / 农业集团', desc:'全球仓储和工厂设施管理', badge:'amber:仓储场景',
-      context:'大型食品集团在全球有大量仓储和工厂设施，定期需要空间盘查和设施管理，目前依赖人工测量效率低。',
-      pitchLabel:'直客话术',
-      pitch:'「你们全球仓储设施的空间管理和设施盘查是否还依赖人工测量？FJD Trion 可以在几小时内完成一个大型仓库的完整三维扫描，生成精确库存空间模型，支持设施管理团队做空间优化和结构安全监测，大幅减少人工盘查的时间成本。」',
-      link:'https://www.bunge.com/Locations', linkText:'Bunge 全球设施' },
-  ]
-},
+{name:'Trimble X9 代理商',desc:'Trimble Geospatial · 定站式激光扫描仪',badge:'amber:中等竞争 有合作空间',
+context:'这批代理商卖 Trimble X9 定站仪，客户是建筑、基础设施、工厂的精密测量，对 Trimble 品牌信任度高。',
+insight:{type:'fact',text:'📎 已核实：Trimble X7 于 2024年11月宣布停产，X9 为当前主力产品。Trimble 至今无手持 SLAM 移动扫描仪产品。（来源：Trimble 官网，2024）'},
+pitchLabel:'填补缺口话术',
+pitch:'「Trimble X9 在定站精密扫描是很好的产品，你们的客户对它的精度满意——但 Trimble 至今没有手持 SLAM 移动扫描仪。你们的客户一旦需要手持移动、快速巡查、室内复杂路径扫描，现在给什么答案？FJD Trion 是 Trimble 产品组合里缺失的那一块，我们不竞争，是补全——两套设备一起卖，打包报价，你们单次项目收益翻倍。」'},
 
-competitor: {
-  icon:'⚔️', title:'竞争对手代理商 — 转换 & 并行话术', sub:'数据经公开来源核实 · 威胁程度标注',
-  tip:'<strong>核心定位：FJD 不是「又一个」手持扫描仪。</strong>我们是唯一拥有完整闭环生态的品牌：自研硬件（P/S 系列）+ 自研 SLAM 算法 + 自研六大 Mind 软件模块 + 机器人产品线。所有研发、迭代、生产均由 FJDynamics 自主完成。对手只有设备，我们有的是整个行业解决方案生态——这一点在长期竞争中的优势是不可逆的。',
-  partners:[
-    { name:'Leica BLK2GO 代理商', desc:'Hexagon 集团 · 手持 SLAM 扫描仪', badge:'red:强竞争',
-      context:'这批代理商代理 Leica BLK2GO，客户主要是建筑、工程、设施管理公司，对 Leica 品牌有信任度。',
-      insight:{type:'fact', text:'📎 已核实：BLK2GO 硬件自 2019 年发布至今无新一代硬件，2025年仅为固件更新（v4.3.0）。BLK2GO PULSE 为室内轻量用途的全新产品线，非 BLK2GO 升级版。（来源：Leica 官网，2025年9月）'},
-      pitchLabel:'转换 / 并行话术',
-      pitch:'「你们的 BLK2GO 客户很忠实，但他们一直在等一个问题的答案——这款硬件什么时候升级？BLK2GO 的硬件从 2019 年发布至今没有新一代，竞争对手已经迭代了好几轮。FJD Trion 的点云质量在独立测试中已经超过 BLK2GO，而且我们有完整的六大 Mind 行业模块——这是 Leica 完全没有的。\n\n你们可以继续卖 BLK2GO 服务老客户，同时用 FJD 开拓那些需要行业解决方案的新客户，两条腿走路。Leica 迭代慢是客观事实，长远来看我们的生态优势会越来越明显。」' },
+{name:'CHCNAV RS10 代理商',desc:'中国测量品牌 · 手持 SLAM',badge:'amber:中等威胁',
+context:'这批代理商卖 CHCNAV RS10 手持扫描仪，通常也在卖 CHCNAV 的 RTK 产品，客户是中小型测量公司。',
+pitchLabel:'正面替换话术',
+pitch:'「RS10 作为入门设备有它的市场，但你们的客户如果在问——有没有更完整的生态、更丰富的行业模块、更强的软件？——RS10 给不了答案。FJD Trion 从硬件精度到六大 Mind 行业软件，整个体系都是自研的，长期迭代能力不是 CHCNAV 这类以 RTK 为主业的公司能匹敌的。而且 FJD 还有完整的机器人产品线，你们代理 FJD 给客户提供的是一个持续扩展的生态，不是一个单一产品。」'},
 
-    { name:'FARO Orbis / Focus 代理商', desc:'FARO Technologies · NASDAQ: FARO', badge:'red:强竞争但有缺口',
-      context:'这批代理商卖 FARO Focus（定站三脚架扫描仪）和 Orbis（移动扫描），客户是工程、制造、执法调查公司。',
-      insight:{type:'fact', text:'📎 已核实：FARO Orbis / Orbis Premium 使用第三方 GeoSLAM 的 SLAM 算法，非 FARO 自研。FARO Focus 系列为固定三脚架，无手持移动版本。（来源：FARO 官网，GeoWeek News，2025）'},
-      pitchLabel:'对比话术',
-      pitch:'「你们卖的 FARO Orbis 本身是个好产品，但有一个关键点值得你们了解——Orbis 的 SLAM 算法是用 GeoSLAM 的，不是 FARO 自研的。这意味着 FARO 的核心能力依赖第三方，如果 GeoSLAM 的算法迭代慢，FARO 也无能为力。\n\nFJD Trion 的 SLAM 算法是我们全程自研自迭代的，从硬件到软件到行业模块，整个生态都在我们手里。此外 FARO Focus 系列是定站式，根本没有手持移动版本——你们的客户如果需要移动扫描，FJD 是更完整的选择。」' },
+{name:'XGRIDS L2 / K1 代理商',desc:'3D 扫描新兴品牌 · 游戏 / 视频场景',badge:'amber:中等威胁',
+context:'这批代理商卖 XGRIDS 的手持扫描仪，软件侧重游戏和视频创作场景，在测量和行业工作流上覆盖有限。',
+insight:{type:'fact',text:'📎 已核实：XGRIDS 软件定位游戏和视频场景，无专业测量行业工作流模块。Satlab 为 XGRIDS 和 Feima 的 OEM 品牌。'},
+pitchLabel:'话术',
+pitch:'「XGRIDS 在消费级和视频制作方向有用户基础，但你们的客户如果是专业测量、林业、建筑、矿山，XGRIDS 的软件完全没有行业工作流支持。FJD 的六大 Mind 模块是针对每个行业深度定制的，不是通用点云软件——这是本质区别。」'},
 
-    { name:'NavVis VLX / MLX 代理商', desc:'室内移动测量 · AEC 数字孪生', badge:'red:强竞争 AEC方向',
-      context:'这批代理商卖 NavVis 的穿戴式和手持扫描设备，主要客户是大型 AEC 公司、工厂数字孪生项目。',
-      insight:{type:'fact', text:'📎 已核实：NavVis MLX 重3.6kg，续航约45分钟，32线LiDAR，5mm精度。NavVis 软件无任何垂直行业专属模块（无TreeMind / GolfMind / MineMind）。（来源：NavVis 官网，2024）'},
-      pitchLabel:'转换 / 并行话术',
-      pitch:'「NavVis 在 AEC 领域有名气，但它有几个问题你们的客户一定感受到了：3.6kg 的机身加上 45 分钟续航，在长时间外业扫描里非常吃力；而且它的软件完全只针对 AEC，一旦遇到林业、高尔夫、矿山、法证方向的客户，NavVis 就无法响应。\n\nFJD Trion 从轻量 P1 到高配 S2 Max 覆盖不同场景需求，六大 Mind 模块深度服务六个垂直行业——NavVis 是一个工具，FJD 是一套生态。」' },
+{name:'OmniSLAM LiGrip 代理商',desc:'手持扫描仪新兴品牌',badge:'green:低威胁',
+pitchLabel:'话术',
+pitch:'「OmniSLAM 的着色效果还不错，但它没有 P 系列精密型、没有行业软件模块、没有完整的产品生态。FJD 是整个生态，OmniSLAM 只是一个设备。你们代理 FJD 能给客户提供的是从采集到行业报告的完整方案。」'},
 
-    { name:'Trimble X9 代理商', desc:'Trimble Geospatial · 定站式激光扫描仪', badge:'amber:中等竞争 有合作空间',
-      context:'这批代理商卖 Trimble X9 定站仪，客户是建筑、基础设施、工厂的精密测量，对 Trimble 品牌信任度高。',
-      insight:{type:'fact', text:'📎 已核实：Trimble X7 于 2024年11月宣布停产，X9 为当前主力产品。Trimble 至今无手持 SLAM 移动扫描仪产品。（来源：Trimble 官网，Vectors Inc.，2024）'},
-      pitchLabel:'填补缺口话术（双品牌并行）',
-      pitch:'「Trimble X9 在定站精密扫描是很好的产品，你们的客户对它的精度满意——但 Trimble 至今没有手持 SLAM 移动扫描仪。你们的客户一旦需要手持移动、快速巡查、室内复杂路径扫描，现在给什么答案？\n\nFJD Trion 是 Trimble 产品组合里缺失的那一块，我们不竞争，是补全——两套设备一起卖，打包报价，客户满意，你们单次项目收益翻倍。」' },
+{name:'South / StoneX / SHARE / GoSLAM 代理商',desc:'低端市场竞争者 · 最易切换',badge:'green:低威胁',
+insight:{type:'fact',text:'📎 已核实：South 扫描仪 OEM 自 SHARE，StoneX X200 GO 约 €35,000（来源：3dsurvey.si，2025年12月）。GoSLAM 为小型公司，产品迭代记录有限。'},
+pitchLabel:'替换话术',
+pitch:'「这些品牌的共同问题是：软件弱、迭代慢、或依赖 OEM 无自研能力。你们的客户现在买这些产品，买的是价格，不是价值。FJD 在相比较的价格区间提供的是远超他们的生态深度和持续更新能力，你们向客户解释清楚这个差异，转换动力很强，而且你们代理 FJD 的毛利空间也更好。」'},
+]},
 
-    { name:'CHCNAV RS10 代理商', desc:'中国测量品牌 · 手持 SLAM', badge:'amber:中等威胁',
-      context:'这批代理商卖 CHCNAV RS10 手持扫描仪，通常也在卖 CHCNAV 的 RTK 产品，客户是中小型测量公司。',
-      insight:{type:'fact', text:'📎 已核实：CHCNAV RS10 为手持 SLAM 扫描仪，无 P 系列精密型产品，软件生态以 RTK 测量为主，垂直行业模块缺失。'},
-      pitchLabel:'正面替换话术',
-      pitch:'「RS10 作为入门设备有它的市场，但你们的客户如果在问——有没有更完整的生态、更丰富的行业模块、更强的软件？——RS10 给不了答案。FJD Trion 从硬件精度到六大 Mind 行业软件，整个体系都是自研的，长期迭代能力不是 CHCNAV 这类以 RTK 为主业的公司能匹敌的。」' },
+// ── 机器人产品线 ──
 
-    { name:'XGRIDS L2 / K1 代理商', desc:'3D 扫描新兴品牌 · 游戏 / 视频场景', badge:'amber:中等威胁',
-      context:'这批代理商卖 XGRIDS 的手持扫描仪，软件侧重游戏和视频创作场景，在测量和行业工作流上覆盖有限。',
-      insight:{type:'fact', text:'📎 已核实：XGRIDS 软件定位游戏和视频场景，无专业测量行业工作流模块。Satlab 为 XGRIDS 和 Feima 的 OEM 品牌。'},
-      pitchLabel:'话术',
-      pitch:'「XGRIDS 在消费级场景和视频制作方向有用户基础，但你们的客户如果是专业测量、林业、建筑、矿山，XGRIDS 的软件完全没有行业工作流支持。FJD 的六大 Mind 模块是针对每个行业深度定制的，不是通用点云软件——这是本质区别。」' },
+mower:{icon:'🌿',title:'割草机器人 — FL3000 / FR4000 / RM21 / RCM01 / GM22S',sub:'目标：已销售草坪设备、景观机械、高尔夫设备的代理商',
+tip:'FJD 割草机器人产品线覆盖从住宅（FL3000）到商业运动场（RM21）到高尔夫球场专业级（GM22S / RCM01）的完整场景，全系RTK精度，自主规划路径。<strong>切入逻辑：找已经在服务同一批客户的设备代理商，帮他们从手动设备升级到全自动机器人。</strong>',
+partners:[
+{name:'John Deere / Husqvarna / STIHL 草坪设备代理商',desc:'传统草坪割草设备品牌代理',badge:'green:高优先',
+context:'这批代理商卖传统割草机和园艺设备，客户是物业管理公司、市政园林部门、住宅开发商，有成熟的设备销售和维护渠道。',
+insight:{type:'win',text:'✅ 这批客户正面临劳动力短缺和成本上升压力，机器人替代是他们迫切需要的解决方案。'},
+pitchLabel:'升级替换话术',
+pitch:'「你们的客户每年花大量人工成本在割草上，但劳动力越来越难找、越来越贵。FJD FL3000 / FR4000 割草机器人覆盖到 4000㎡，RTK 精度定位，自主规划路径，自动返回充电——你们的客户一次投资，未来每次割草都不需要人。你们不需要放弃现有设备业务，机器人是同一批客户的升级选项，你们是最熟悉他们需求的人。」',
+link:'https://landscaping.fjdynamics.com/product/fjd-fl3000-lidar-robotic-mower',linkText:'FL3000 产品页'},
 
-    { name:'OmniSLAM LiGrip 代理商', desc:'手持扫描仪新兴品牌', badge:'green:低威胁',
-      context:'这批代理商卖 OmniSLAM LiGrip 系列，产品着色效果不错，但产品线单一，无行业软件生态。',
-      pitchLabel:'话术',
-      pitch:'「OmniSLAM 的着色效果还不错，但它没有 P 系列精密型、没有行业软件模块、没有完整的产品生态。FJD 是整个生态，OmniSLAM 只是一个设备。你们代理 FJD 能给客户提供的是从采集到行业报告的完整方案，而不是一个单独的扫描工具。」' },
+{name:'高尔夫球场设备代理商',desc:'球场护理设备、草坪机械、高尔夫用品',badge:'green:高优先',
+context:'这批代理商卖草坪护理设备、灌溉系统、球场运营工具，客户是高尔夫球场管理层和 Superintendent（草坪总监）。',
+insight:{type:'win',text:'✅ FJD GM22S（果岭绿道专用割草机）+ RCM01（滚刀割草机）+ GolfMind 扫描软件是全球极少数针对高尔夫球场的完整自动化解决方案。'},
+pitchLabel:'GolfMind 完整方案话术',
+pitch:'「你们的球场客户每年花多少钱在人工割草上？FJD 的高尔夫机器人方案——GM22S 果岭专用割草机 + RCM01 滚刀机器人 + FJD Trion P2 扫描建图 + GolfMind 数字化管理平台——让球场的日常割草、施肥、喷药全部自动化。你们作为球场设备代理，可以把这个方案打包推给你们现有的球场客户，这是一个高端、高利润、高黏性的新产品线。」',
+link:'https://landscaping.fjdynamics.com/solution/golf-course-solution',linkText:'FJD 高尔夫方案'},
 
-    { name:'South / StoneX / SHARE / GoSLAM 代理商', desc:'低端市场竞争者 · 最易切换', badge:'green:低威胁',
-      context:'这批代理商卖低价扫描仪，South 主要 OEM 自 SHARE，StoneX X200 GO 约 35,000 欧元，GoSLAM 为小型公司，产品力和软件均较弱。',
-      insight:{type:'fact', text:'📎 已核实：South 扫描仪 OEM 自 SHARE，StoneX X200 GO 约 €35,000（来源：3dsurvey.si，2025年12月）。GoSLAM 为小型公司，产品迭代记录有限。'},
-      pitchLabel:'替换话术',
-      pitch:'「这些品牌的共同问题是：软件弱、迭代慢、或依赖 OEM 无自研能力。你们的客户现在买这些产品，买的是价格，不是价值。FJD 在相比较的价格区间提供的是远超他们的生态深度和持续更新能力，你们向客户解释清楚这个差异，转换动力很强，而且你们代理 FJD 的毛利空间也更好。」' },
-  ]
-},
+{name:'运动场 / 学校 / 市政设施管理代理商',desc:'运动设施维护、公园绿化、学校设备',badge:'blue:规模化场景',
+context:'这批代理商服务运动场馆、学校、公园、市政机构，负责设施维护和采购，草坪维护是重要需求。',
+pitchLabel:'规模化运营话术',
+pitch:'「你们的运动场和市政客户管理大面积草坪，人工成本高且难以保证质量一致性。FJD RM21 大型割草机器人支持多区域管理、远程监控、自动续航，一个机器人替代 3-4 名工人。你们作为设施管理代理商，可以把机器人作为年度服务合同的一部分来推，从卖设备升级到卖服务。」',
+link:'https://www.fjdynamics.com/product/fjd-rm21-robotic-mower',linkText:'RM21 产品页'},
 
-intel: {
-  icon:'🕵️', title:'广告反追踪情报工具', sub:'通过监控竞品广告，找到正在主动推广 LiDAR 的代理商',
-  tip:'投竞品广告的公司 = 主动推广这个品类的活跃代理商。接触他们时，他们已经认可这个品类的价值，只需要说明 FJD 生态为什么更优。<strong>这是效率最高的冷启动代理商开发方式。</strong>',
-  partners:[
-    { name:'Meta 广告库', desc:'facebook.com/ads/library', badge:'blue:情报工具',
-      context:'Meta 广告库覆盖 Facebook 和 Instagram 上的所有广告主，适合找 B2C 倾向的代理商。',
-      pitchLabel:'使用步骤',
-      pitch:'步骤 1：进入 Meta 广告库\n步骤 2：搜索关键词「Xgrids」「3D LiDAR Scanner」「GeoSLAM」「BLK2GO」「SLAM Scanner」\n步骤 3：记录正在投竞品广告的公司名，这些是主动推广该品类的代理商\n步骤 4：接触时说明 FJD 生态优势，转换动力强',
-      link:'https://www.facebook.com/ads/library/', linkText:'进入 Meta 广告库' },
+{name:'景观设计 / 绿化承包商代理商',desc:'景观工程、园艺服务公司',badge:'amber:服务升级',
+context:'这批代理商服务景观设计公司和绿化承包商，这些公司既是设备买家也是终端服务提供者。',
+pitchLabel:'话术',
+pitch:'「你们的景观公司客户目前靠人工割草提供维护服务，利润薄且受限于工人数量。FJD 割草机器人让他们用更少的人覆盖更多的项目，同时可以给他们的业主客户提供更稳定、更一致的草坪效果。你们帮他们引入机器人，他们的竞争力提升了，对你们的依赖也更强了。」'},
 
-    { name:'LinkedIn 广告库', desc:'linkedin.com/ad-library/home', badge:'blue:情报工具',
-      context:'LinkedIn 广告库覆盖 B2B 广告，这里找到的代理商质量更高、决策层级更清晰。',
-      pitchLabel:'使用步骤',
-      pitch:'步骤 1：进入 LinkedIn 广告库\n步骤 2：搜索「LiDAR Scanner」「Handheld Mapping」「Mobile SLAM Scanner」「3D scanning BIM」\n步骤 3：B2B 代理商更常在 LinkedIn 投广告，这里是更高质量的代理商线索来源',
-      link:'https://www.linkedin.com/ad-library/home', linkText:'进入 LinkedIn 广告库' },
+{name:'农业机械代理商',desc:'农业设备、大型商用机械',badge:'gray:延伸场景',
+context:'农业机械代理商服务农场、牧场，部分客户有大面积草地维护需求，与割草机器人使用场景重叠。',
+pitchLabel:'话术',
+pitch:'「你们的农场客户有大面积草地需要定期维护，但农业劳动力比城市更加稀缺。FJD FR4000 割草机器人覆盖到 1 英亩，RTK 精度，能处理坡度最高 65% 的地形，适合牧场和农场的草地管理场景——这是你们现有产品线里还没有覆盖的品类。」',
+link:'https://us.fjdynamics.com/products/fjd-fr4000-robotic-lawn-mower',linkText:'FR4000 产品页'},
+]},
 
-    { name:'Google 广告透明度中心', desc:'adstransparency.google.com', badge:'blue:情报工具',
-      context:'Google 广告透明度中心显示哪些公司在 Google 上买了哪些关键词广告。',
-      pitchLabel:'使用步骤',
-      pitch:'步骤 1：进入 Google 广告透明度中心\n步骤 2：搜索竞品品牌名称（Leica BLK2GO、FARO Orbis、GeoSLAM 等）\n步骤 3：识别正在投竞品关键词广告的公司，这些广告主通常转换意愿较高',
-      link:'https://adstransparency.google.com/', linkText:'进入 Google 广告透明度' },
-  ]
-},
+lineMarking:{icon:'📐',title:'划线机器人 — PaintMaster Pro / Mini',sub:'目标：运动场管理、机场地勤设备、停车场运营、工地测量代理商',
+tip:'FJD PaintMaster 系列（Pro / Mini）使用双工业级 GNSS 定位，厘米级精度，支持各类运动场地、机场跑道、停车场、工地放样的自动化划线。<strong>核心卖点：90% 劳动力节省 + 重复精度 + 无需专业操作员。</strong>',
+partners:[
+{name:'运动场设施管理代理商',desc:'体育场馆、学校运动场、俱乐部设备',badge:'green:高优先',
+context:'这批代理商服务足球场、橄榄球场、网球场、田径场等运动设施的管理层，划线是高频刚需工作。',
+insight:{type:'win',text:'✅ 已核实：FJD PaintMaster Mini 在香港运动场有实际使用案例，节省超过 90% 劳动力成本。（来源：FJD 官网，2025）'},
+pitchLabel:'核心话术',
+pitch:'「你们的体育场客户现在每次划线要花多少人工时间？量距离、拉绳子、喷漆、复查，一个标准足球场通常需要 4-6 小时。FJD PaintMaster 机器人，从场地建图到完成划线全程不超过 45 分钟，厘米级精度，无需专业操作员，而且每次线条完全一致。你们作为运动场设备代理，推这个产品给你们现有的球场客户，这是他们一直在等的解决方案。」',
+link:'https://landscaping.fjdynamics.com/product/fjd-paintmaster-mini',linkText:'PaintMaster Mini 产品页'},
 
-};
+{name:'机场地勤设备代理商',desc:'机场地面支持设备 · 跑道维护',badge:'blue:高价值场景',
+context:'机场地勤设备代理商为机场提供跑道维护、地面标识、停机坪设备，是高度专业化的采购渠道。',
+pitchLabel:'机场场景话术',
+pitch:'「机场跑道和滑行道的标线精度要求极高，任何误差都涉及飞行安全。FJD PaintMaster Pro 使用双工业级 GNSS 定位，厘米级精度，支持激光辅助套件用于 GPS 信号受限区域（如候机楼附近）。相比传统人工划线，精度更高，操作更安全，而且可以在非运营时间快速完成——这是机场管理层无法拒绝的提案。」',
+link:'https://www.fjdynamics.com/product/fjd-rlm01-robotic-line-marker',linkText:'PaintMaster Pro 产品页'},
 
-// ── RENDER ────────────────────────────────────────────────────────────────
-function badgeHtml(str){
+{name:'停车场运营 & 物业管理代理商',desc:'商业地产、停车场设施管理',badge:'blue:稳定需求',
+context:'停车场和商业地产的地面标线需要定期更新，目前依赖人工喷漆，效率低且容易因施工质量不均导致返工。',
+pitchLabel:'停车场话术',
+pitch:'「停车场的地面标线每隔一两年就需要重新喷漆，你们的物业客户每次都要请外包施工队，成本高而且质量参差不齐。FJD PaintMaster 机器人让这件事变成内部可操作的标准化流程，第一次建好数字地图之后，每次划线只需要点一下启动，线条精度和上次完全一致。你们的物业管理客户一次性投资，年年都用。」'},
+
+{name:'工程测量 & 建筑放样代理商',desc:'建筑施工测量、土木工程测量',badge:'amber:专业场景',
+context:'工程测量代理商服务建筑施工公司和土木工程公司，工地放样是关键工序，传统方式依赖全站仪和人工测量。',
+pitchLabel:'工地放样话术',
+pitch:'「你们的施工客户每次开工都要花大量时间做地面放样，传统全站仪需要两个人配合，效率低。FJD PaintMaster Pro 配合 RTK 定位，可以在工地地面自动绘制设计图纸的放样标记，精度达厘米级，一个人操作，施工团队按标记施工，减少因放样错误导致的返工。这是你们可以额外推给施工客户的高附加值工具。」'},
+
+{name:'体育场地管理软件 / 设施运营平台代理商',desc:'运动设施管理 SaaS 平台',badge:'purple:软件整合',
+context:'这批代理商为运动设施提供管理软件，客户包括体育馆、球场运营公司，软件管理比赛排期、设施预订、维护计划。',
+pitchLabel:'话术',
+pitch:'「你们的运动设施管理软件覆盖了排期和预订，但草坪维护和划线这个环节还是靠人工执行。FJD PaintMaster 机器人可以和你们的管理平台集成——比赛日期一确定，系统自动派发划线任务给机器人，执行结果有照片记录。你们的软件从"管理工具"升级成"自动化执行平台"，这对你们的客户来说是一个很大的价值提升。」'},
+]},
+
+cleaning:{icon:'🧹',title:'清洁机器人 — Sveabot 系列',sub:'目标：商业地产、酒店、医院、工厂的清洁设备代理商',
+tip:'Sveabot 是 FJDynamics 旗下的商业清洁机器人品牌，覆盖扫拖一体、自主充电、24/7 无人值守运营。<strong>核心卖点：解决清洁行业高员工流动率和劳动力短缺问题，用机器人实现稳定、一致的清洁质量。</strong>',
+partners:[
+{name:'商业清洁设备代理商',desc:'高美、Tennant、Nilfisk 等品牌代理',badge:'green:高优先',
+context:'这批代理商卖工业清洁机、洗地机等清洁设备，客户是商业地产、购物中心、工厂、机场，已有清洁设备销售渠道。',
+insight:{type:'win',text:'✅ Sveabot 已核实：自主充电、扫拖一体、精准地图导航、24/7 运营。（来源：Sveabot 官网）'},
+pitchLabel:'升级替换话术',
+pitch:'「你们的客户现在用的洗地机需要专人驾驶，清洁质量和人员状态直接相关。Sveabot 清洁机器人自主导航、自主充电、24/7 稳定运行，用更少的水和清洁剂覆盖更大的面积，而且清洁记录全程数字化可查。你们不需要放弃现有业务，Sveabot 是同一批客户的升级选项，而且机器人的售后服务合同是持续收益。」',
+link:'https://sveabot.fjdynamics.com/',linkText:'Sveabot 官网'},
+
+{name:'物业管理公司服务代理商',desc:'商业物业、写字楼、购物中心管理',badge:'blue:规模化场景',
+context:'这批代理商为物业管理公司提供清洁外包服务或清洁设备，客户包括写字楼、购物中心、公寓大厦。',
+pitchLabel:'话术',
+pitch:'「你们的物业管理客户每年清洁人工成本是最大的支出之一，而且员工流动率高、培训成本高。Sveabot 清洁机器人可以承担日常地面清洁的 70-80% 工作量，剩余工作由少量人员负责复杂区域，整体成本大幅下降。你们可以把 Sveabot 作为清洁外包服务的升级方案来推，提高你们服务的竞争差异化。」'},
+
+{name:'酒店 & 医院设备采购代理商',desc:'酒店业、医疗机构设施管理',badge:'amber:高端场景',
+context:'酒店和医院对清洁质量要求极高，同时面临劳动力短缺问题，愿意为稳定可靠的解决方案付出溢价。',
+pitchLabel:'话术',
+pitch:'「酒店和医院的清洁标准非常高，但人工清洁的一致性很难保证。Sveabot 清洁机器人每次按照固定路径和参数执行，清洁结果可预测、可记录、可审计——这对酒店品质管理和医院感染控制来说是很有说服力的价值。你们作为这类机构的设备代理商，推 Sveabot 比推传统清洁设备更有技术门槛和溢价空间。」'},
+
+{name:'工厂 & 仓储物流设备代理商',desc:'制造业、仓储物流设施',badge:'amber:规模化需求',
+context:'工厂和仓储设施有大面积地面需要定期清洁，目前依赖工人或驾驶式洗地机，人力成本高。',
+pitchLabel:'话术',
+pitch:'「你们的工厂和仓储客户有大面积标准地面需要定期清洁，这是最适合机器人替代的场景——路径固定、重复性强、对精度要求清晰。Sveabot 可以在夜间无人时段自动完成整个仓库地面的清扫和拖洗，白班工人早上进入的是已经清洁好的工作环境，整体运营效率提升明显。」'},
+]},
+
+livestock:{icon:'🐄',title:'畜牧推料机器人',sub:'目标：牧场设备、农业机械、畜牧自动化代理商',
+tip:'畜牧推料机器人自动将饲料推向牛只可以够到的位置，减少饲料浪费，提高饲喂效率。<strong>核心卖点：解决农场劳动力短缺，实现 24/7 自动推料，降低饲料浪费，提高产奶量。</strong>',
+partners:[
+{name:'牧场设备代理商',desc:'挤奶设备、饲喂系统、牧场自动化',badge:'green:高优先',
+context:'这批代理商为牧场和奶牛场提供自动化设备，客户已接受机器人挤奶、自动饲喂系统的概念，对自动化开放。',
+insight:{type:'win',text:'✅ 核心客户需求：奶牛场劳动力短缺是全球性问题，自动推料直接影响产奶效率，ROI 直接可量化。'},
+pitchLabel:'核心话术',
+pitch:'「你们的奶牛场客户最头疼的问题之一是推料——牛吃饲料时会把饲料推离饲喂栏，需要工人频繁手动推回。FJD 畜牧推料机器人 24 小时自动巡回推料，确保牛只随时都能够到饲料，减少饲料浪费，研究显示产奶量可以提升 5-10%。你们已经在为这批客户服务，推这个机器人是同一批客户的自然延伸，ROI 非常清晰。」'},
+
+{name:'农业机械代理商',desc:'农用机械、农场设备、农业自动化',badge:'blue:延伸场景',
+context:'农业机械代理商服务各类农场，产品线涵盖大型农机到农业机器人，畜牧推料机器人是可以延伸的品类。',
+pitchLabel:'话术',
+pitch:'「你们的农业机械产品线已经覆盖了很多农场作业的自动化，但畜牧喂养环节还有一个重要场景你们可能还没有产品——推料。FJD 推料机器人是这个品类里少数成熟商用的产品，你们可以作为独家代理在你们的区域市场建立这个品类的先发优势。」'},
+
+{name:'畜牧行业协会 & 咨询公司',desc:'农业技术推广、牧场管理咨询',badge:'amber:渠道推广',
+context:'畜牧行业协会和咨询公司影响牧场主的采购决策，是推广新技术的重要渠道。',
+pitchLabel:'话术',
+pitch:'「你们的会员和客户正在寻找解决劳动力短缺的方案，FJD 畜牧推料机器人是一个技术成熟、ROI 明确的选项。我们可以合作举办技术展示活动，让你们的会员在真实场景中看到效果——这对你们协会来说也是向会员提供技术支持价值的好机会，对我们来说是最精准的渠道触达。」'},
+]},
+
+construction:{icon:'🏗️',title:'工地放样机器人 — SmartTS / RCM01',sub:'目标：建筑测量、工程顾问、施工总包代理商',
+tip:'FJD 工地放样机器人将传统需要两人配合的全站仪放样工作，变成一人操控的自动化流程，精度达毫米级。<strong>核心卖点：减少放样人工成本 50%+ ，消除因放样错误造成的施工返工。</strong>',
+partners:[
+{name:'工程测量仪器代理商',desc:'全站仪、GPS、测量仪器代理',badge:'green:高优先',
+context:'这批代理商卖全站仪、GPS 测量仪器，客户是测量公司、工程公司，他们的客户是放样机器人的直接用户。',
+insight:{type:'win',text:'✅ 切入逻辑：放样机器人是全站仪的自动化升级，同一批客户，更高效率，更高客单价。'},
+pitchLabel:'升级话术',
+pitch:'「你们的全站仪客户每次做放样都要两个人配合，在工地上来回走、对准、记录，一个大项目放样要花半天甚至一天。FJD SmartTS 放样机器人让一个人就能完成整个工地的放样，精度达毫米级，还可以提前在软件里模拟放样路径，减少现场时间。你们可以把放样机器人作为全站仪客户的升级方案来推，客单价更高，而且同样的客户群。」'},
+
+{name:'建筑总包商采购代理',desc:'大型建筑施工总包商供应商',badge:'blue:大客户场景',
+context:'建筑总包商有多个工地同时进行，放样是每个项目的关键工序，对效率和精度要求极高。',
+pitchLabel:'话术',
+pitch:'「你们的总包商客户同时管理多个工地，放样人员的调配是一个持续的问题。FJD 放样机器人让放样工作标准化、可复制——同样的数字模型，在任何工地都能精确复现。总包商可以用更少的专业测量人员覆盖更多的工地，人工效率提升显著，而且放样记录全程数字化，减少争议。」'},
+
+{name:'BIM 软件代理商',desc:'Revit、Autodesk、Bentley 代理',badge:'purple:软件整合',
+context:'BIM 软件代理商的客户已经在用 BIM 做数字化设计，但从数字模型到实体施工的"最后一公里"还需要传统放样。',
+pitchLabel:'话术',
+pitch:'「你们的客户已经用 BIM 做了完整的数字化设计，但从数字模型到实体施工的放样这个环节，还是靠人工全站仪执行，这是数字化工作流里的一个断点。FJD 放样机器人直接读取 BIM 数据，在现场精确复现设计模型——这让你们的客户真正实现从设计到施工的全流程数字化，你们也可以以此为切入点帮客户采购 FJD 机器人。」'},
+]},
+
+intel:{icon:'📡',title:'广告反追踪情报工具',sub:'通过监控竞品广告，找到正在主动推广 LiDAR / 机器人的代理商',
+tip:'投竞品广告的公司 = 主动推广这个品类的活跃代理商。接触他们时，他们已经认可这个品类的价值，只需要说明 FJD 生态为什么更优。<strong>这是效率最高的冷启动代理商开发方式。</strong>',
+partners:[
+{name:'Meta 广告库',desc:'facebook.com/ads/library · 覆盖 Facebook & Instagram',badge:'blue:情报工具',
+context:'Meta 广告库覆盖 Facebook 和 Instagram 上的所有广告主，适合找 B2C 倾向的代理商和正在推广竞品的渠道商。',
+pitchLabel:'使用步骤',
+pitch:'步骤 1：进入 Meta 广告库\n步骤 2：搜索关键词「Xgrids」「3D LiDAR Scanner」「GeoSLAM」「BLK2GO」「robotic lawn mower」「line marking robot」\n步骤 3：记录正在投竞品广告的公司名，这些是主动推广该品类的代理商\n步骤 4：接触时说明 FJD 生态优势，转换动力强',
+link:'https://www.facebook.com/ads/library/',linkText:'进入 Meta 广告库'},
+
+{name:'LinkedIn 广告库',desc:'linkedin.com/ad-library · B2B 高质量代理商线索',badge:'blue:情报工具',
+context:'LinkedIn 广告库覆盖 B2B 广告，这里找到的代理商质量更高、决策层级更清晰，适合找企业级代理商。',
+pitchLabel:'使用步骤',
+pitch:'步骤 1：进入 LinkedIn 广告库\n步骤 2：搜索「LiDAR Scanner」「Handheld Mapping」「robotic mower」「autonomous cleaning」「line marking robot」\n步骤 3：B2B 代理商更常在 LinkedIn 投广告，这里是更高质量的代理商线索来源\n步骤 4：直接联系广告主公司的 Business Development 或 Sales Director',
+link:'https://www.linkedin.com/ad-library/home',linkText:'进入 LinkedIn 广告库'},
+
+{name:'Google 广告透明度中心',desc:'adstransparency.google.com · 搜索关键词竞价代理商',badge:'blue:情报工具',
+context:'Google 广告透明度中心显示哪些公司在 Google 上买了哪些关键词广告，覆盖范围最广。',
+pitchLabel:'使用步骤',
+pitch:'步骤 1：进入 Google 广告透明度中心\n步骤 2：搜索竞品品牌名称（Leica BLK2GO、FARO Orbis、GeoSLAM、Husqvarna Automower 等）\n步骤 3：识别正在投竞品关键词广告的公司，这些广告主通常转换意愿较高\n步骤 4：结合 LinkedIn 搜索找到该公司的采购决策人',
+link:'https://adstransparency.google.com/',linkText:'进入 Google 广告透明度'},
+]},
+
+};// end DATA
+
+// ════════════════ RENDER ════════════════
+function badge(str){
   if(!str) return '';
-  const [color,text] = str.split(':');
-  const map = {red:'b-red',green:'b-green',amber:'b-amber',blue:'b-blue',purple:'b-purple',gray:'b-gray'};
-  return `<span class="badge ${map[color]||'b-gray'}">${text}</span>`;
+  const [c,t] = str.split(':');
+  const m={red:'b-red',green:'b-green',amber:'b-amber',blue:'b-blue',purple:'b-purple',gray:'b-gray',orange:'b-orange'};
+  return `<span class="badge ${m[c]||'b-gray'}">${t}</span>`;
 }
-
-function insightHtml(ins){
+function insight(ins){
   if(!ins) return '';
   return `<div class="insight ${ins.type}">${ins.text}</div>`;
 }
-
-function pitchHtml(label, pitch, isDark){
-  const lines = pitch.replace(/\n/g,'<br>');
-  if(isDark){
-    const styled = lines
-      .replace(/FJD([^，。？「」<br]*)/g, '<span class="hl">FJD$1</span>')
-      .replace(/（([^）]+)）/g,'（<span class="wl">$1</span>）');
-    return `<div class="pitch-label">${label}</div><div class="pitch-box dark">${styled}</div>`;
-  }
-  return `<div class="pitch-label">${label}</div><div class="pitch-box">${lines}</div>`;
-}
-
-function renderPartner(p, isComp){
-  const compClass = isComp ? `competitor ${
-    p.badge&&p.badge.startsWith('red') ? 'comp-strong' :
-    p.badge&&p.badge.startsWith('amber') ? 'comp-medium' : 'comp-weak'
-  }` : '';
-  return `
-  <div class="partner-card ${compClass}" onclick="toggleCard(this)">
+function renderPartner(p,isComp){
+  const compCls = isComp ? `competitor ${p.badge&&p.badge.startsWith('red')?'comp-strong':p.badge&&p.badge.startsWith('amber')?'comp-medium':'comp-weak'}` : '';
+  const pitchCls = isComp ? 'pitch-box dark' : (p.isRobot ? 'pitch-box robot' : 'pitch-box');
+  const pitchHtml = isComp
+    ? p.pitch.replace(/FJD([^，。？「」\n<]*)/g,'<span class="hl">FJD$1</span>')
+    : p.pitch.replace(/\n/g,'<br>');
+  return `<div class="partner-card ${compCls}" onclick="toggle(this)">
     <div class="partner-top">
-      <div>
-        <div class="partner-name">${p.name}</div>
-        <div class="partner-desc">${p.desc}</div>
-      </div>
-      <div class="partner-right">
-        ${badgeHtml(p.badge)}
-        <span class="expand-icon">+</span>
-      </div>
+      <div><div class="partner-name">${p.name}</div><div class="partner-desc">${p.desc}</div></div>
+      <div class="partner-right">${badge(p.badge)}<div class="expand-btn">+</div></div>
     </div>
     <div class="partner-body">
-      ${p.context ? `<div class="context-bar">📍 <strong>话术背景：</strong>${p.context}</div>` : ''}
-      ${insightHtml(p.insight)}
-      ${pitchHtml(p.pitchLabel||'话术', p.pitch, isComp)}
-      ${p.link ? `<a class="ext-link" href="${p.link}" target="_blank">${p.linkText}</a>` : ''}
+      <div class="divider-top"></div>
+      ${p.context?`<div class="context-bar">📍 <strong>话术背景：</strong>${p.context}</div>`:''}
+      ${insight(p.insight)}
+      <div class="pitch-label">${p.pitchLabel||'话术'}</div>
+      <div class="${pitchCls}">${pitchHtml}</div>
+      ${p.link?`<a class="ext-link" href="${p.link}" target="_blank">${p.linkText}</a>`:''}
     </div>
   </div>`;
 }
 
 function showDetail(key){
-  const sec = SECTIONS[key];
-  if(!sec) return;
+  const s = DATA[key]; if(!s) return;
   const isComp = key==='competitor';
-  const isIntel = key==='intel';
-  document.getElementById('home').style.display = 'none';
+  document.getElementById('home').style.display='none';
   const dv = document.getElementById('detail-view');
-  dv.style.display = 'block';
-  document.getElementById('d-icon').textContent = sec.icon;
-  document.getElementById('d-title').textContent = sec.title;
-  document.getElementById('d-sub').textContent = sec.sub;
-  const body = document.getElementById('d-body');
-  body.innerHTML = `
-    <div class="strategy-tip">${sec.tip}</div>
-    <div class="partner-list">
-      ${sec.partners.map(p => renderPartner(p, isComp)).join('')}
-    </div>
-    <div style="height:32px"></div>
-  `;
+  dv.style.display='block';
+  document.getElementById('d-icon').textContent=s.icon;
+  document.getElementById('d-title').textContent=s.title;
+  document.getElementById('d-sub').textContent=s.sub;
+  document.getElementById('d-body').innerHTML=`
+    <div class="strategy-tip">${s.tip}</div>
+    <div class="partner-list">${s.partners.map(p=>renderPartner(p,isComp)).join('')}</div>
+    <div style="height:32px"></div>`;
   window.scrollTo(0,0);
 }
-
 function showHome(){
-  document.getElementById('detail-view').style.display = 'none';
-  document.getElementById('home').style.display = 'block';
+  document.getElementById('detail-view').style.display='none';
+  document.getElementById('home').style.display='block';
   window.scrollTo(0,0);
 }
-
-function toggleCard(card){
-  const wasOpen = card.classList.contains('open');
-  document.querySelectorAll('.partner-card.open').forEach(c=>{
-    c.classList.remove('open');
-  });
+function toggle(card){
+  const wasOpen=card.classList.contains('open');
+  document.querySelectorAll('.partner-card.open').forEach(c=>c.classList.remove('open'));
   if(!wasOpen) card.classList.add('open');
 }
 </script>
